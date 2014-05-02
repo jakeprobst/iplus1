@@ -1,0 +1,24 @@
+OKAYHERESTHEPLAN
+
+
+
+
+libiplus1 will be a c library that you throw your setences in and it stems/joins/does magic to it
+it`ll also have a function where you throw a sentence into it and it tells you what words are not in the list
+
+like iplus1_collection_add_sentence function that`ll parse out a sentence and store the individual words
+then iplus1_collection_get_new_words will output a list of words the sentence contains that are not in the collection
+
+
+then we`ll have iplus1d
+it`ll load up all the sentences at startup and keep them around or something
+it`ll sit and listen for connections
+someone can send the sentences from their anki deck to the daemon and request X sentences with Y new words in them
+iplus1d will then go through the sentence db and send back acceptable sentences
+
+
+
+
+
+
+
