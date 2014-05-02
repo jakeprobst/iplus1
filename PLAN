@@ -3,7 +3,7 @@ OKAYHERESTHEPLAN
 
 
 
-libiplus1 will be a c library that you throw your setences in and it stems/joins/does magic to it
+libiplus1 will be a c library that you throw your sentences in and it stems/joins/does magic to it
 it`ll also have a function where you throw a sentence into it and it tells you what words are not in the list
 
 like iplus1_collection_add_sentence function that`ll parse out a sentence and store the individual words
@@ -17,6 +17,7 @@ someone can send the sentences from their anki deck to the daemon and request X 
 iplus1d will then go through the sentence db and send back acceptable sentences
 
 
+and probably iplus1c as a thing to take the .anki file and query a server and/or do it locally
 
 
 
