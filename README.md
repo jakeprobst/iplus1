@@ -12,7 +12,7 @@ make install
 ```
 
 
-## Build on Ubuntu
+#### Build on Ubuntu
 ```
 sudo apt-get install libxdg-basedir-dev
 make
