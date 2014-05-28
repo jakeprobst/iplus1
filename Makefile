@@ -5,7 +5,7 @@ PREFIX=/usr/local/
 LIB_VERSION = 1.0.0
 LIB_SHORTVER = 1
 
-all: libiplus1.so iplus1d iplus1c
+all: libiplus1.so languages iplus1d iplus1c
 
 build:
 	mkdir build/
@@ -13,7 +13,7 @@ build:
 # libiplus1
 
 LIB_CFLAGS = `pkg-config --cflags libxdg-basedir` -fPIC -ggdb -Wall -Werror
-LIB_LDFLAGS = -fPIC `pkg-config --libs libxdg-basedir`
+LIB_LDFLAGS = -fPIC `pkg-config --libs libxdg-basedir` -ldl
 
 LIB_SRC = $(wildcard src/libiplus1/*.c)
 LIB_OSRC = $(patsubst src/libiplus1/%,%,$(LIB_SRC))
@@ -31,7 +31,25 @@ libiplus1.so: build/libiplus1 $(LIB_OBJ)
 	ln -sf libiplus1.so.$(LIB_VERSION) libiplus1.so
 	
 
-#iplus1d
+# language plugins
+
+LANG_CFLAGS = `pkg-config --cflags libxdg-basedir` -fPIC -ggdb -Wall -Werror -Isrc/libiplus1
+LANG_LDFLAGS = -fPIC `pkg-config --libs libxdg-basedir` -L. -liplus1
+
+LANG_SRC = $(wildcard src/libiplus1/lang/*.c)
+LANG_OSRC = $(patsubst src/libiplus1/lang/%,%,$(LANG_SRC))
+LANG_OBJ = $(foreach obj, $(LANG_OSRC:.c=.so), lang/$(obj))
+
+lang:
+	mkdir -p lang
+
+lang/%.so: src/libiplus1/lang/%.c
+	$(CXX) -shared $(LANG_CFLAGS) $(LANG_LDFLAGS) -o $@ $<
+
+languages: lang $(LANG_OBJ)
+	
+
+# iplus1d
 
 D_CFLAGS = `pkg-config --cflags libxdg-basedir` -ggdb -Wall -Werror -Isrc/libiplus1
 D_LDFLAGS = `pkg-config --libs libxdg-basedir` -L. -liplus1
@@ -49,7 +67,7 @@ build/iplus1d/%.o: src/iplus1d/%.c
 iplus1d: build/iplus1d $(D_OBJ) 
 	$(CXX) -o $@ $(D_OBJ) $(D_LDFLAGS)
 
-#iplus1c
+# iplus1c
 
 C_CFLAGS = `pkg-config --cflags libxdg-basedir` -ggdb -Wall -Werror -Isrc/libiplus1
 C_LDFLAGS = `pkg-config --libs libxdg-basedir` -L. -liplus1
@@ -68,5 +86,5 @@ iplus1c: build/iplus1c $(C_OBJ)
 	$(CXX) -o $@ $(C_OBJ) $(C_LDFLAGS)
 
 clean:
-	rm -r build
+	rm -r build lang
 	rm libiplus1.so* iplus1c iplus1d
