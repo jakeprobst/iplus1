@@ -1,0 +1,6 @@
+build/
+iplus1.geany
+libiplus1*
+iplus1c
+iplus1d
+!src/*
