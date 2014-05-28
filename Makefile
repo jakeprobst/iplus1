@@ -1,4 +1,7 @@
 CXX = gcc
+PREFIX=/usr/local/
+
+
 LIB_VERSION = 1.0.0
 LIB_SHORTVER = 1
 
@@ -24,8 +27,9 @@ build/libiplus1/%.o: src/libiplus1/%.c
 
 libiplus1.so: build/libiplus1 $(LIB_OBJ) 
 	$(CXX) -shared -Wl,-soname,$@.$(LIB_VERSION) -o $@.$(LIB_VERSION) $(LIB_OBJ) $(LIB_LDFLAGS)
-	ln -sf libiplus1.so.$(LIB_VERSION) libiplus1.so
 	ln -sf libiplus1.so.$(LIB_VERSION) libiplus1.so.$(LIB_SHORTVER)
+	ln -sf libiplus1.so.$(LIB_VERSION) libiplus1.so
+	
 
 #iplus1d
 
