@@ -25,7 +25,7 @@ int iplus1_init(iplus1_t*);
 int iplus1_destroy(iplus1_t*);
 
 
-
+struct iplus1_lang_t* iplus1_get_lang(iplus1_t*, char*);
 
 
 

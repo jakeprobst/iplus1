@@ -21,7 +21,7 @@ int _iplus1_load_languages(iplus1_t* iplus1)
     // TODO: later on this should use the PREFIX variable
     // but for now I`ll just hardcode it where they are locally
     
-    int count = 0;
+    int count = 1; // language list is null terminated, so start with one
     
     DIR* dir;
     if ((dir = opendir("./lang")) == NULL) {
@@ -62,6 +62,19 @@ int _iplus1_load_languages(iplus1_t* iplus1)
     
     closedir(dir);
     return count;
+}
+
+
+iplus1_lang_t* iplus1_get_lang(iplus1_t* iplus1, char* lang)
+{
+    int i;
+    for(i = 0; iplus1->language[i] != NULL; i++) {
+        if (strncmp(iplus1->language[i]->lang, lang, 3) == 0) {
+            return iplus1->language[i];
+        }
+    }
+    
+    return NULL;
 }
 
 
