@@ -25,7 +25,7 @@ int _iplus1_load_languages(iplus1_t* iplus1)
     
     DIR* dir;
     if ((dir = opendir("./lang")) == NULL) {
-        printf("language directory not found\n");
+        fprintf(stderr, "language directory not found\n");
         return IPLUS1_FAIL;
     }
     
@@ -36,7 +36,7 @@ int _iplus1_load_languages(iplus1_t* iplus1)
         }
     }
     if (count == 0) {
-        printf("no languages found\n");
+        fprintf(stderr, "no languages found\n");
         return IPLUS1_FAIL;
     }
     
