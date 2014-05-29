@@ -34,38 +34,17 @@ char** parse(char* str, void* param)
     }
     
     output = calloc(sizeof(char*), count);
-    
-    printf("str: %s\n", str);
-    
+        
     char* tmp;
     for(tmp = str, i = 0; (s = strtok_r(tmp, " ", &position)) != NULL; tmp = NULL, i++) {
         const sb_symbol* stemmed = sb_stemmer_stem(eng->stemmer, (sb_symbol*)s, strlen(s));
-        
-        printf("s: %s\n", stemmed);
-        
+                
         output[i] = malloc(strlen((char*)stemmed)+1);
         strcpy(output[i], (char*)stemmed);
     }
     
     return output;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 int init(iplus1_lang_t* lang)
 {
@@ -78,13 +57,6 @@ int init(iplus1_lang_t* lang)
         fprintf(stderr, "could not find english stemmer\n");
         return IPLUS1_FAIL;
     }
-    
-    
-    
-    
-    
-    
-    
     
     return IPLUS1_SUCCESS;
 }
