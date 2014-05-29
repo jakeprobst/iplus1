@@ -88,3 +88,13 @@ int init(iplus1_lang_t* lang)
     
     return IPLUS1_SUCCESS;
 }
+
+int destroy(iplus1_lang_t* lang)
+{
+    iplus1_english_t* eng = (iplus1_english_t*)lang->param;
+    
+    sb_stemmer_delete(eng->stemmer);
+    free(lang->param);
+    
+    return IPLUS1_SUCCESS;
+}

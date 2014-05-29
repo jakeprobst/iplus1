@@ -50,7 +50,7 @@ int _iplus1_load_languages(iplus1_t* iplus1)
             snprintf(path, FILENAME_MAX, "%s%s", "lang/", dp->d_name);
             
             iplus1->language[lindex] = malloc(sizeof(iplus1_lang_t));
-            if (iplus1_lang_load(path, iplus1->language[lindex]) == IPLUS1_FAIL) {
+            if (iplus1_lang_init(iplus1->language[lindex], path) == IPLUS1_FAIL) {
                 count--;
                 free(iplus1->language[lindex]);
             }
@@ -102,6 +102,14 @@ int iplus1_init(iplus1_t* iplus1)
 
 int iplus1_destroy(iplus1_t* iplus1)
 {
+    int i;
+    for(i = 0; iplus1->language[i] != NULL; i++) {
+        free(iplus1->language[i]);
+        iplus1->language[i]->destroy(iplus1->language[i]);
+    }
+    
+    free(iplus1->language);
+    
     return IPLUS1_SUCCESS;
 }
 

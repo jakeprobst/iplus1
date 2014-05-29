@@ -12,7 +12,7 @@
 
 
 
-int iplus1_lang_load(char* path, iplus1_lang_t* lang)
+int iplus1_lang_init(iplus1_lang_t* lang, char* path)
 {
     void* handle;
     if ((handle = dlopen(path, RTLD_LAZY)) == NULL) {
@@ -25,11 +25,15 @@ int iplus1_lang_load(char* path, iplus1_lang_t* lang)
     if ((init = dlsym(handle, "init")) == NULL) {
         fprintf(stderr, "no init func in %s\n", path);
         return IPLUS1_FAIL;
-        
     }
 
     if ((lang->parse = dlsym(handle, "parse")) == NULL) {
         fprintf(stderr, "no parse func in %s\n", path);
+        return IPLUS1_FAIL;
+    }
+    
+    if ((lang->destroy = dlsym(handle, "destroy")) == NULL) {
+        fprintf(stderr, "no destroy func in %s\n", path);
         return IPLUS1_FAIL;
     }
 
