@@ -12,12 +12,6 @@
 
 
 
-
-
-
-
-
-
 int iplus1_lang_load(char* path, iplus1_lang_t* lang)
 {
     void* handle;
@@ -34,10 +28,16 @@ int iplus1_lang_load(char* path, iplus1_lang_t* lang)
         
     }
 
-    if ((lang->process = dlsym(handle, "process")) == NULL) {
-        fprintf(stderr, "no process func in %s\n", path);
+    if ((lang->parse = dlsym(handle, "parse")) == NULL) {
+        fprintf(stderr, "no parse func in %s\n", path);
         return IPLUS1_FAIL;
     }
 
     return init(lang);
 }
+
+char** iplus1_lang_parse(iplus1_lang_t* lang, char* str)
+{
+    return lang->parse(str, lang->param);
+}
+
