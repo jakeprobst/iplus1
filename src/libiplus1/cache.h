@@ -5,7 +5,7 @@
 
 
 
-typedef struct _iplus1_cache_t {
+typedef struct iplus1_cache_t {
     
     
     
@@ -14,7 +14,7 @@ typedef struct _iplus1_cache_t {
 
 
 
-void iplus1_cache_init(iplus1_cache_t*);
+void iplus1_cache_init(iplus1_cache_t*, char*);
 void iplus1_cache_destroy(iplus1_cache_t*);
 
 
