@@ -34,7 +34,7 @@ libiplus1.so: build/libiplus1 $(LIB_OBJ)
 # language plugins
 
 LANG_CFLAGS = `pkg-config --cflags libxdg-basedir` -fPIC -ggdb -Wall -Werror -Isrc/libiplus1
-LANG_LDFLAGS = -fPIC `pkg-config --libs libxdg-basedir` -L. -liplus1
+LANG_LDFLAGS = -fPIC `pkg-config --libs libxdg-basedir` -L. -liplus1 -lstemmer
 
 LANG_SRC = $(wildcard src/libiplus1/lang/*.c)
 LANG_OSRC = $(patsubst src/libiplus1/lang/%,%,$(LANG_SRC))
