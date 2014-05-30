@@ -19,7 +19,7 @@ typedef struct iplus1_spanish_t {
 
 char** parse(char* str, void* param)
 {
-    iplus1_english_t* spa = (iplus1_spanish_t*)param;
+    iplus1_spanish_t* spa = (iplus1_spanish_t*)param;
     
     char** output;
     char* position;
