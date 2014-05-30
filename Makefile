@@ -12,8 +12,8 @@ build:
 
 # libiplus1
 
-LIB_CFLAGS = `pkg-config --cflags libxdg-basedir` -fPIC -ggdb -Wall -Werror
-LIB_LDFLAGS = -fPIC `pkg-config --libs libxdg-basedir` -ldl
+LIB_CFLAGS = -fPIC -ggdb -Wall -Werror
+LIB_LDFLAGS = -fPIC -ldl
 
 LIB_SRC = $(wildcard src/libiplus1/*.c)
 LIB_OSRC = $(patsubst src/libiplus1/%,%,$(LIB_SRC))
@@ -33,8 +33,8 @@ libiplus1.so: build/libiplus1 $(LIB_OBJ)
 
 # language plugins
 
-LANG_CFLAGS = `pkg-config --cflags libxdg-basedir` -fPIC -ggdb -Wall -Werror -Isrc/libiplus1
-LANG_LDFLAGS = -fPIC `pkg-config --libs libxdg-basedir` -L. -liplus1 -lstemmer
+LANG_CFLAGS = -fPIC -ggdb -Wall -Werror -Isrc/libiplus1
+LANG_LDFLAGS = -fPIC -L. -liplus1 -lstemmer
 
 LANG_SRC = $(wildcard src/libiplus1/lang/*.c)
 LANG_OSRC = $(patsubst src/libiplus1/lang/%,%,$(LANG_SRC))
@@ -51,8 +51,8 @@ languages: lang $(LANG_OBJ)
 
 # iplus1d
 
-D_CFLAGS = `pkg-config --cflags libxdg-basedir` -ggdb -Wall -Werror -Isrc/libiplus1
-D_LDFLAGS = `pkg-config --libs libxdg-basedir` -L. -liplus1
+D_CFLAGS = -ggdb -Wall -Werror -Isrc/libiplus1
+D_LDFLAGS = -L. -liplus1
 
 D_SRC = $(wildcard src/iplus1d/*.c)
 D_OSRC = $(patsubst src/iplus1d/%,%,$(D_SRC))
@@ -69,8 +69,8 @@ iplus1d: build/iplus1d $(D_OBJ)
 
 # iplus1c
 
-C_CFLAGS = `pkg-config --cflags libxdg-basedir` -ggdb -Wall -Werror -Isrc/libiplus1
-C_LDFLAGS = `pkg-config --libs libxdg-basedir` -L. -liplus1
+C_CFLAGS = -ggdb -Wall -Werror -Isrc/libiplus1
+C_LDFLAGS = -L. -liplus1
 
 C_SRC = $(wildcard src/iplus1c/*.c)
 C_OSRC = $(patsubst src/iplus1c/%,%,$(C_SRC))
