@@ -37,7 +37,15 @@ int iplus1_lang_init(iplus1_lang_t* lang, char* path)
         return IPLUS1_FAIL;
     }
 
+    lang->dlhandle = handle;
     return init(lang);
+}
+
+int iplus1_lang_destroy(iplus1_lang_t* lang)
+{
+    lang->destroy(lang);
+    dlclose(lang->dlhandle);
+    return IPLUS1_SUCCESS;
 }
 
 char** iplus1_lang_parse(iplus1_lang_t* lang, char* str)

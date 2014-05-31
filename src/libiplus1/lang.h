@@ -14,6 +14,7 @@ typedef struct iplus1_lang_t {
     char** (*parse)(char*, void*);
     int (*destroy)(struct iplus1_lang_t*);
     
+    void* dlhandle;
     
 } iplus1_lang_t;
 

@@ -104,8 +104,8 @@ int iplus1_destroy(iplus1_t* iplus1)
 {
     int i;
     for(i = 0; iplus1->language[i] != NULL; i++) {
+        iplus1_lang_destroy(iplus1->language[i]);
         free(iplus1->language[i]);
-        iplus1->language[i]->destroy(iplus1->language[i]);
     }
     
     free(iplus1->language);
