@@ -41,6 +41,8 @@ int iplus1_sentence_add_translation(iplus1_sentence_t* original, iplus1_sentence
     int size = (sizeof(original->translations)/sizeof(iplus1_sentence_t*)) + 1;
     
     original->translations = realloc(original->translations, size*sizeof(iplus1_sentence_t*));
+    if (original->translations == NULL)
+        return IPLUS1_FAIL;
     original->translations[size-2] = translated;
     original->translations[size-1] = NULL;
     

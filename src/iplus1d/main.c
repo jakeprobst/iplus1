@@ -156,7 +156,6 @@ int main()
     load_collection(&iplus1, &main_db);
     link_collection(&iplus1, &main_db);
     
-    
     iplus1_sentence_t* sen = iplus1_collection_get_sentence_by_id(&main_db, 120033);
     
     printf("orig: %s\n", sen->str);

@@ -34,12 +34,23 @@ char** parse(char* str, void* param)
     }
     
     output = calloc(sizeof(char*), count);
+    if (output == NULL) {
+        return NULL;
+    }
         
     char* tmp;
     for(tmp = str, i = 0; (s = strtok_r(tmp, " ", &position)) != NULL; tmp = NULL, i++) {
         const sb_symbol* stemmed = sb_stemmer_stem(eng->stemmer, (sb_symbol*)s, strlen(s));
                 
         output[i] = malloc(strlen((char*)stemmed)+1);
+        if (output[i] == NULL) {
+            int n;
+            for (n = 0; n < i; n++) {
+                free(output[n]);
+            }
+            free(output);
+            return NULL;
+        }
         strcpy(output[i], (char*)stemmed);
     }
     
@@ -50,6 +61,8 @@ int init(iplus1_lang_t* lang)
 {
     strcpy(lang->lang, "eng");
     lang->param = malloc(sizeof(iplus1_english_t));
+    if (lang->param == NULL)
+        return IPLUS1_FAIL;
     lang->parse = parse;
     
     iplus1_english_t* eng = (iplus1_english_t*)lang->param;

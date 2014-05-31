@@ -116,6 +116,8 @@ iplus1_tree_node_t* _tree_insert(iplus1_tree_node_t* root, iplus1_tree_node_t* n
 int iplus1_tree_insert(iplus1_tree_t* tree, void* key, void* value)
 {
     iplus1_tree_node_t* node = malloc(sizeof(iplus1_tree_node_t));
+    if (node == NULL)
+        return IPLUS1_FAIL;
     node->key = key;
     node->value = value;
     node->height = 1;
