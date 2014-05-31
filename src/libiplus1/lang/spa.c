@@ -25,7 +25,7 @@ char** parse(char* str, void* param)
     char* position;
     char* s;
     
-    int count = 1; // +1 because NULL terminated
+    int count = 2; // +1 because NULL terminated, +1 cause spaces+1
     int i;
     for(i = 0; str[i] != '\0'; i++) {
         if (str[i] == ' ') {
