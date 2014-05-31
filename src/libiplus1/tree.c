@@ -147,24 +147,39 @@ void* iplus1_tree_get(iplus1_tree_t* tree, void* key)
 }
 
 
-int _iplus1_tree_node_foreach(iplus1_tree_node_t* node, int (*func)(void*))
+int _iplus1_tree_node_foreach_inorder(iplus1_tree_node_t* node, int (*func)(void*, void*), void* param)
 {
     
     if (node != NULL) {
-        _iplus1_tree_node_foreach(node->left, func);
-        func(node->value);
-        _iplus1_tree_node_foreach(node->right, func);
+        _iplus1_tree_node_foreach_inorder(node->left, func, param);
+        func(node->value, param);
+        _iplus1_tree_node_foreach_inorder(node->right, func, param);
     }
     return IPLUS1_SUCCESS;
 }
 
-int iplus1_tree_foreach(iplus1_tree_t* tree, int (*func)(void*))
+int _iplus1_tree_node_foreach_postorder(iplus1_tree_node_t* node, int (*func)(void*, void*), void* param)
 {
-    _iplus1_tree_node_foreach(tree->root, func);
+    
+    if (node != NULL) {
+        _iplus1_tree_node_foreach_postorder(node->left, func, param);
+        _iplus1_tree_node_foreach_postorder(node->right, func, param);
+        func(node->value, param);
+    }
     return IPLUS1_SUCCESS;
 }
 
+int iplus1_tree_foreach_inorder(iplus1_tree_t* tree, int (*func)(void*, void*), void* param)
+{
+    _iplus1_tree_node_foreach_inorder(tree->root, func, param);
+    return IPLUS1_SUCCESS;
+}
 
+int iplus1_tree_foreach_postorder(iplus1_tree_t* tree, int (*func)(void*, void*), void* param)
+{
+    _iplus1_tree_node_foreach_postorder(tree->root, func, param);
+    return IPLUS1_SUCCESS;
+}
 
 
 

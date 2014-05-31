@@ -33,7 +33,9 @@ int iplus1_tree_destroy(iplus1_tree_t*);
 
 int iplus1_tree_insert(iplus1_tree_t*, void*, void*);
 void* iplus1_tree_get(iplus1_tree_t*, void*);
-int iplus1_tree_foreach(iplus1_tree_t*, int (*func)(void*));
+
+int iplus1_tree_foreach_inorder(iplus1_tree_t*, int (*func)(void*, void*), void*);
+int iplus1_tree_foreach_postorder(iplus1_tree_t*, int (*func)(void*, void*), void*);
 
 
 
