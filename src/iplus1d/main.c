@@ -159,10 +159,20 @@ int main()
     iplus1_sentence_t* sen = iplus1_collection_get_sentence_by_id(&main_db, 120033);
     
     printf("orig: %s\n", sen->str);
+    printf("%d\n", sen->trans_count);
     int i;
     for(i = 0; sen->translations[i] != NULL; i++) {
         printf("trans: %s\n", sen->translations[i]->str);
     }
+    
+    iplus1_sentence_t** work = iplus1_collection_get_sentences_by_word(&main_db, "work");
+    
+    
+    
+    for(i = 0; work[i] != NULL; i++) {
+        printf("work: %s\n", work[i]->str);
+    }
+    
     
     iplus1_collection_destroy(&main_db);
     iplus1_destroy(&iplus1);
