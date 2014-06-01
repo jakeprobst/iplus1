@@ -13,7 +13,7 @@ build:
 # libiplus1
 
 LIB_CFLAGS = -fPIC -ggdb -Wall -Werror
-LIB_LDFLAGS = -fPIC -ldl
+LIB_LDFLAGS = -fPIC -ldl -licu
 
 LIB_SRC = $(wildcard src/libiplus1/*.c)
 LIB_OSRC = $(patsubst src/libiplus1/%,%,$(LIB_SRC))
@@ -34,7 +34,7 @@ libiplus1.so: build/libiplus1 $(LIB_OBJ)
 # language plugins
 
 LANG_CFLAGS = -fPIC -ggdb -Wall -Werror -Isrc/libiplus1
-LANG_LDFLAGS = -fPIC -L. -liplus1 -lstemmer
+LANG_LDFLAGS = -fPIC -L. -liplus1 -lstemmer -licu
 
 LANG_SRC = $(wildcard src/libiplus1/lang/*.c)
 LANG_OSRC = $(patsubst src/libiplus1/lang/%,%,$(LANG_SRC))
