@@ -51,8 +51,8 @@ languages: lang $(LANG_OBJ)
 
 # iplus1d
 
-D_CFLAGS = -ggdb -Wall -Werror -Isrc/libiplus1
-D_LDFLAGS = -L. -liplus1
+D_CFLAGS = -ggdb -Wall -Werror -Isrc/libiplus1 `pkg-config --cflags icu-uc`
+D_LDFLAGS = -L. -liplus1 `pkg-config --libs icu-uc`
 
 D_SRC = $(wildcard src/iplus1d/*.c)
 D_OSRC = $(patsubst src/iplus1d/%,%,$(D_SRC))
