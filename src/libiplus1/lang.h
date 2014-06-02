@@ -25,8 +25,10 @@ int iplus1_lang_destroy(iplus1_lang_t*);
 
 char** iplus1_lang_parse(iplus1_lang_t*, char*);
 
-
-
+// convenience functions for language plugins
+// most will probably want to use these
+int iplus1_lang_lowercase(char*);
+char** iplus1_lang_split(char*);
 
 
 
