@@ -38,11 +38,6 @@ int iplus1_word_add_sentence(iplus1_word_t* word, iplus1_sentence_t* sen)
     word->sentences[word->sen_count-2] = sen;
     word->sentences[word->sen_count-1] = NULL;
     
-    /*int i;
-    for(i = 0; word->sentences[i] != NULL; i++) {
-        printf("%s: %s\n", word->str, word->sentences[i]->str);
-    }*/
-    
     return word->sen_count;
 }
 
