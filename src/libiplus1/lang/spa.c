@@ -13,46 +13,64 @@ typedef struct iplus1_spanish_t {
     
 } iplus1_spanish_t;
 
-
-
-
+int valid_word(char* s)
+{
+    char* punc = " -!?.";
+    
+    int i;
+    for(i = 0; punc[i] != '\0'; i++) {
+        if (s[0] == punc[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
 
 char** parse(char* str, void* param)
 {
     iplus1_spanish_t* spa = (iplus1_spanish_t*)param;
     
-    char** output;
-    char* position;
-    char* s;
-    
-    int count = 2; // +1 because NULL terminated, +1 cause spaces+1
-    int i;
-    for(i = 0; str[i] != '\0'; i++) {
-        if (str[i] == ' ') {
-            count++;
-        }
+    if (iplus1_lang_lowercase(str) == IPLUS1_FAIL) {
+        return NULL;
     }
     
-    output = calloc(sizeof(char*), count);
+    char** split = iplus1_lang_split(str);
+    int output_size = 1; // +1 cause null terminated
+    int i;
+    for(i = 0; split[i] != NULL; i++) {
+        if (valid_word(split[i])) {
+            output_size++;
+        }
+    }
+    char** output = calloc(sizeof(char*), output_size);
     if (output == NULL) {
         return NULL;
     }
+    
+    int output_index = 0;
+    for(i = 0; split[i] != NULL; i++) {
+        if (!valid_word(split[i])) {
+            continue;
+        }
         
-    char* tmp;
-    for(tmp = str, i = 0; (s = strtok_r(tmp, " ", &position)) != NULL; tmp = NULL, i++) {
-        const sb_symbol* stemmed = sb_stemmer_stem(spa->stemmer, (sb_symbol*)s, strlen(s));
-                
-        output[i] = malloc(strlen((char*)stemmed)+1);
-        if (output[i] == NULL) {
+        const sb_symbol* stemmed = sb_stemmer_stem(spa->stemmer, (sb_symbol*)split[i], strlen(split[i]));
+        output[output_index] = malloc(strlen((char*)stemmed)+1);
+        if (output[output_index] == NULL) {
             int n;
-            for (n = 0; n < i; n++) {
+            for (n = 0; n < output_index; n++) {
                 free(output[n]);
             }
             free(output);
             return NULL;
         }
-        strcpy(output[i], (char*)stemmed);
+        strcpy(output[output_index], (char*)stemmed);
+        output_index++;
     }
+    
+    for(i = 0; split[i] != NULL; i++) {
+        free(split[i]);
+    }
+    free(split);
     
     return output;
 }
