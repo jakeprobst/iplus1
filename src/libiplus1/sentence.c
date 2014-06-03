@@ -23,7 +23,7 @@ int iplus1_sentence_init(iplus1_sentence_t* sen, iplus1_lang_t* lang, char* str)
         return IPLUS1_FAIL;
     }
     sen->trans_count = 0;
-    sen->translations = NULL;
+    sen->translations = calloc(sizeof(iplus1_sentence_t*), 1);
     
     return IPLUS1_SUCCESS;
 }
