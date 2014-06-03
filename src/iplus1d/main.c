@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include <unicode/uclean.h>
+
 #include "iplus1.h"
 #include "cache.h"
 #include "collection.h"
@@ -85,11 +88,13 @@ int load_collection(iplus1_t* iplus1, iplus1_collection_t* col)
         if (lang != NULL) {
             iplus1_sentence_t* sen = malloc(sizeof(iplus1_sentence_t));
             
-            iplus1_sentence_init(sen, lang, sentence);
+            if (iplus1_sentence_init(sen, lang, sentence) == IPLUS1_FAIL) {
+                free(sen);
+                goto error;
+            }
             sen->id = id;
             
             iplus1_collection_add_sentence(col, sen);
-            
         }
 error:
         free(language);
@@ -165,17 +170,18 @@ int main()
         printf("trans: %s\n", sen->translations[i]->str);
     }
     
-    iplus1_sentence_t** work = iplus1_collection_get_sentences_by_word(&main_db, "work");
+    iplus1_sentence_t** work = iplus1_collection_get_sentences_by_word(&main_db, "voic");
     
     
     
     for(i = 0; work[i] != NULL; i++) {
-        printf("work: %s\n", work[i]->str);
+        printf("voic: %d %s\n", work[i]->id, work[i]->str);
     }
     
     
     iplus1_collection_destroy(&main_db);
     iplus1_destroy(&iplus1);
     
+    u_cleanup();
     return 0;
 }
