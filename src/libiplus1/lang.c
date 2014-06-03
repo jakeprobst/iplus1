@@ -68,7 +68,7 @@ int iplus1_lang_lowercase(char* str)
     UChar uc[len+1];
     u_strFromUTF8(uc, len+1, &len, str, strlen(str), &error); 
     if (U_FAILURE(error)) {
-        fprintf(stderr, "iplus1_lang_lowercase:u_strFromUTF8 error: %d\n", error);
+        fprintf(stderr, "iplus1_lang_lowercase:u_strFromUTF8 error: '%s' %d\n", str, error);
         return IPLUS1_FAIL;
     }
     
