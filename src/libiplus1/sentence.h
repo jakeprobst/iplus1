@@ -11,7 +11,7 @@ typedef struct iplus1_sentence_t {
     char** words;
     
     int trans_count;
-    struct iplus1_sentence_t** translations;
+    struct iplus1_sentence_t** translations; // NULL terminated
 } iplus1_sentence_t;
 
 

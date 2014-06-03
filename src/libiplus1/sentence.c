@@ -22,7 +22,7 @@ int iplus1_sentence_init(iplus1_sentence_t* sen, iplus1_lang_t* lang, char* str)
         free(sen->str);
         return IPLUS1_FAIL;
     }
-    sen->trans_count = 1; //NULL terminated
+    sen->trans_count = 0;
     sen->translations = NULL;
     
     return IPLUS1_SUCCESS;
@@ -49,11 +49,11 @@ int iplus1_sentence_add_translation(iplus1_sentence_t* original, iplus1_sentence
 {
     original->trans_count++;
     
-    original->translations = realloc(original->translations, original->trans_count*sizeof(iplus1_sentence_t*));
+    original->translations = realloc(original->translations, (original->trans_count + 1) *sizeof(iplus1_sentence_t*));
     if (original->translations == NULL)
         return IPLUS1_FAIL;
-    original->translations[original->trans_count-2] = translated;
-    original->translations[original->trans_count-1] = NULL;
+    original->translations[original->trans_count-1] = translated;
+    original->translations[original->trans_count] = NULL;
     
     return original->trans_count;
 }
