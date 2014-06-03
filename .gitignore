@@ -1,8 +1,7 @@
-build/
-lang/
+/build/
+/lang/
 iplus1.geany
-libiplus1*
-iplus1c
-iplus1d
-!src/*
+/libiplus1*
+/iplus1c
+/iplus1d
 *csv
