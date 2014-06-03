@@ -2,7 +2,7 @@
 #define _TREE_H_
 
 // some sort of avl tree thing that I attempted to implment after reading about
-// it on wikipedia. it is probably wrong.
+// it on wikipedia. it seems to be correct.
 // used for reference:
 // http://www.geeksforgeeks.org/avl-tree-set-1-insertion/ 
 // http://www.eternallyconfuzzled.com/tuts/datastructures/jsw_tut_avl.aspx
