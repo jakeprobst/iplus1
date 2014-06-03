@@ -18,6 +18,10 @@ int iplus1_sentence_init(iplus1_sentence_t* sen, iplus1_lang_t* lang, char* str)
     strncpy(sen->lang, lang->lang, 4);
     sen->str = strdup(str);
     sen->words = iplus1_lang_parse(lang, str);
+    if (sen->words == NULL) {
+        free(sen->str);
+        return IPLUS1_FAIL;
+    }
     sen->trans_count = 1; //NULL terminated
     sen->translations = NULL;
     
@@ -26,12 +30,16 @@ int iplus1_sentence_init(iplus1_sentence_t* sen, iplus1_lang_t* lang, char* str)
 
 int iplus1_sentence_destroy(iplus1_sentence_t* sen)
 {
+    if (sen == NULL)
+        return IPLUS1_FAIL;
     free(sen->str);
     int i;
-    for(i = 0; sen->words[i] != NULL; i++) {
-        free(sen->words[i]);
+    if (sen->words) {
+        for(i = 0; sen->words[i] != NULL; i++) {
+            free(sen->words[i]);
+        }
+        free(sen->words);
     }
-    free(sen->words);
     free(sen->translations);
     
     return IPLUS1_SUCCESS;
