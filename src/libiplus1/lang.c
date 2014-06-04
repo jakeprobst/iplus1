@@ -78,9 +78,15 @@ int iplus1_lang_lowercase(char* str)
         return IPLUS1_FAIL;
     }
 
-    u_strToUTF8(str, strlen(str)+1, &len, uc, u_strlen(uc), &error);
+    u_strToUTF8(NULL, 0, &len, uc, u_strlen(uc), &error);
+    error = U_ZERO_ERROR;
+    if (strlen(str) != len) {
+        str = realloc(str, len+1);
+    }
+
+    u_strToUTF8(str, len+1, &len, uc, u_strlen(uc), &error);
     if (U_FAILURE(error)) {
-        fprintf(stderr, "iplus1_lang_lowercase:u_strToUTF8 error: %d\n", error);
+        fprintf(stderr, "iplus1_lang_lowercase:u_strToUTF8 error: '%s' %d\n", str, error);
         return IPLUS1_FAIL;
     }
     
