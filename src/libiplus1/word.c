@@ -16,7 +16,7 @@ int iplus1_word_init(iplus1_word_t* word, char* str)
     word->str = strdup(str);
     word->sen_count = 0;
     //word->sentences = calloc(sizeof(iplus1_sentence_t*), 1);
-    word->sentences = malloc(sizeof(iplus1_sentence_t*));
+    word->sentences = malloc(sizeof(iplus1_list_t));
     iplus1_list_init(word->sentences);
     
     return IPLUS1_SUCCESS;
