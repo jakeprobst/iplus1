@@ -78,6 +78,7 @@ char** parse(char* str, void* param)
 int init(iplus1_lang_t* lang)
 {
     strcpy(lang->lang, "nld");
+    lang->full_lang = strdup("dutch");
     lang->param = malloc(sizeof(iplus1_dutch_t));
     if (lang->param == NULL)
         return IPLUS1_FAIL;
@@ -97,6 +98,7 @@ int destroy(iplus1_lang_t* lang)
     iplus1_dutch_t* nld = (iplus1_dutch_t*)lang->param;
     
     sb_stemmer_delete(nld->stemmer);
+    free(lang->full_lang);
     free(lang->param);
     
     return IPLUS1_SUCCESS;

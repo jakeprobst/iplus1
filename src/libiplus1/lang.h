@@ -9,6 +9,7 @@
 
 typedef struct iplus1_lang_t {
     char lang[4]; // 3 character language code
+    char* full_lang;
     
     void* param;
     char** (*parse)(char*, void*);
