@@ -3,6 +3,7 @@
 
 #include "iplus1.h"
 #include "lang.h"
+#include "list.h"
 
 typedef struct iplus1_sentence_t {
     int id;
@@ -11,7 +12,8 @@ typedef struct iplus1_sentence_t {
     char** words;
     
     int trans_count;
-    struct iplus1_sentence_t** translations; // NULL terminated
+    //struct iplus1_sentence_t** translations; // NULL terminated
+    iplus1_list_t* translations;
 } iplus1_sentence_t;
 
 

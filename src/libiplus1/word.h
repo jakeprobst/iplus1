@@ -2,12 +2,14 @@
 #define _WORD_H_
 
 #include "sentence.h"
+#include "list.h"
 
 typedef struct iplus1_word_t {
     char* str;
     
     int sen_count;
-    iplus1_sentence_t** sentences; // NULL terminated
+    //iplus1_sentence_t** sentences; // NULL terminated
+    iplus1_list_t* sentences;
 } iplus1_word_t;
 
 

@@ -7,7 +7,6 @@
 
 
 
-
 int iplus1_sentence_init(iplus1_sentence_t* sen, iplus1_lang_t* lang, char* str)
 {
     if (sen == NULL || lang == NULL || str == NULL) {
@@ -23,7 +22,9 @@ int iplus1_sentence_init(iplus1_sentence_t* sen, iplus1_lang_t* lang, char* str)
         return IPLUS1_FAIL;
     }
     sen->trans_count = 0;
-    sen->translations = calloc(sizeof(iplus1_sentence_t*), 1);
+    sen->translations = malloc(sizeof(iplus1_list_t));
+    iplus1_list_init(sen->translations);
+    //sen->translations = calloc(sizeof(iplus1_sentence_t*), 1);
     
     return IPLUS1_SUCCESS;
 }
@@ -40,6 +41,7 @@ int iplus1_sentence_destroy(iplus1_sentence_t* sen)
         }
         free(sen->words);
     }
+    iplus1_list_destroy(sen->translations);
     free(sen->translations);
     
     return IPLUS1_SUCCESS;
@@ -49,11 +51,13 @@ int iplus1_sentence_add_translation(iplus1_sentence_t* original, iplus1_sentence
 {
     original->trans_count++;
     
-    original->translations = realloc(original->translations, (original->trans_count + 1) *sizeof(iplus1_sentence_t*));
+    iplus1_list_append(original->translations, translated);
+    
+    /*original->translations = realloc(original->translations, (original->trans_count + 1) *sizeof(iplus1_sentence_t*));
     if (original->translations == NULL)
         return IPLUS1_FAIL;
     original->translations[original->trans_count-1] = translated;
-    original->translations[original->trans_count] = NULL;
+    original->translations[original->trans_count] = NULL;*/
     
     return original->trans_count;
 }

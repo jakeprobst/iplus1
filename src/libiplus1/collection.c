@@ -77,7 +77,8 @@ iplus1_sentence_t* iplus1_collection_get_sentence_by_id(iplus1_collection_t* col
     return iplus1_tree_get(&col->sentences, &id);
 }
 
-iplus1_sentence_t** iplus1_collection_get_sentences_by_word(iplus1_collection_t* col, char* str)
+//iplus1_sentence_t** iplus1_collection_get_sentences_by_word(iplus1_collection_t* col, char* str)
+iplus1_list_t* iplus1_collection_get_sentences_by_word(iplus1_collection_t* col, char* str)
 {
     iplus1_word_t* word = iplus1_tree_get(&col->words, str);
     if (word == NULL) {
