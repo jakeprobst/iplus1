@@ -4,7 +4,6 @@
 #include <dirent.h>
 
 #include "iplus1.h"
-#include "cache.h"
 #include "lang.h"
 
 
@@ -80,22 +79,8 @@ iplus1_lang_t* iplus1_get_lang(iplus1_t* iplus1, char* lang)
     return NULL;
 }
 
-
-
-
-int iplus1_set_cache(iplus1_t* iplus1, iplus1_cache_t* cache)
-{
-    iplus1->cache = cache;
-    return IPLUS1_SUCCESS;
-}
-
-
-
-
 int iplus1_init(iplus1_t* iplus1)
-{
-    iplus1->cache = NULL;
-    
+{    
     if (_iplus1_load_languages(iplus1) == IPLUS1_FAIL) {
         return IPLUS1_FAIL;
     }

@@ -7,12 +7,10 @@ enum {
 };
 
 
-struct iplus1_cache_t;
 struct iplus1_lang_t;
 
 
 typedef struct iplus1_t {
-    struct iplus1_cache_t* cache;
     struct iplus1_lang_t** language;
     
 } iplus1_t;
