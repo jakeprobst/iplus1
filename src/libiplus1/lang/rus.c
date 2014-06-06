@@ -30,7 +30,7 @@ char** parse(char* str, void* param)
 {
     iplus1_russian_t* rus = (iplus1_russian_t*)param;
     
-    if (iplus1_lang_lowercase(str) == IPLUS1_FAIL) {
+    if ((str = iplus1_lang_lowercase(str)) == NULL) {
         return NULL;
     }
     

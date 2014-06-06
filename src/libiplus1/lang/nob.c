@@ -33,7 +33,7 @@ char** parse(char* str, void* param)
 {
     iplus1_norwegian_t* nob = (iplus1_norwegian_t*)param;
     
-    if (iplus1_lang_lowercase(str) == IPLUS1_FAIL) {
+    if ((str = iplus1_lang_lowercase(str)) == NULL) {
         return NULL;
     }
     

@@ -5,6 +5,7 @@
 #include <unicode/ustring.h>
 #include <unicode/ubrk.h>
 
+
 #include "iplus1.h"
 #include "lang.h"
 
@@ -56,7 +57,7 @@ char** iplus1_lang_parse(iplus1_lang_t* lang, char* str)
     return lang->parse(str, lang->param);
 }
 
-int iplus1_lang_lowercase(char* str)
+char* iplus1_lang_lowercase(char* str)
 {
     int len;
     UErrorCode error = U_ZERO_ERROR;
@@ -69,28 +70,26 @@ int iplus1_lang_lowercase(char* str)
     u_strFromUTF8(uc, len+1, &len, str, strlen(str), &error); 
     if (U_FAILURE(error)) {
         fprintf(stderr, "iplus1_lang_lowercase:u_strFromUTF8 error: '%s' %d\n", str, error);
-        return IPLUS1_FAIL;
+        return NULL;
     }
     
     u_strToLower(uc, len+1, uc, u_strlen(uc), "", &error);
     if (U_FAILURE(error)) {
         fprintf(stderr, "iplus1_lang_lowercase:u_strToUpper error: %d\n", error);
-        return IPLUS1_FAIL;
+        return NULL;
     }
 
     u_strToUTF8(NULL, 0, &len, uc, u_strlen(uc), &error);
     error = U_ZERO_ERROR;
-    if (strlen(str) != len) {
-        str = realloc(str, len+1);
-    }
+    char* out_str = malloc(len+1);
 
-    u_strToUTF8(str, len+1, &len, uc, u_strlen(uc), &error);
+    u_strToUTF8(out_str, len+1, &len, uc, u_strlen(uc), &error);
     if (U_FAILURE(error)) {
         fprintf(stderr, "iplus1_lang_lowercase:u_strToUTF8 error: '%s' %d\n", str, error);
-        return IPLUS1_FAIL;
+        return NULL;
     }
     
-    return IPLUS1_SUCCESS;
+    return out_str;
 }
 
 char** iplus1_lang_split(char* str)

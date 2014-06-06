@@ -30,7 +30,7 @@ char** parse(char* str, void* param)
 {
     iplus1_finnish_t* fin = (iplus1_finnish_t*)param;
     
-    if (iplus1_lang_lowercase(str) == IPLUS1_FAIL) {
+    if ((str = iplus1_lang_lowercase(str)) == NULL) {
         return NULL;
     }
     
