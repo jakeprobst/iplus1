@@ -69,8 +69,8 @@ iplus1d: build/iplus1d $(D_OBJ)
 
 # iplus1c
 
-C_CFLAGS = -ggdb -Wall -Werror -Isrc/libiplus1 `pkg-config --cflags icu-uc`
-C_LDFLAGS = -L. -liplus1 `pkg-config --libs icu-uc`
+C_CFLAGS = -ggdb -Wall -Werror -Isrc/libiplus1 `pkg-config --cflags icu-uc sqlite3`
+C_LDFLAGS = -L. -liplus1 `pkg-config --libs icu-uc sqlite3`
 
 C_SRC = $(wildcard src/iplus1c/*.c)
 C_OSRC = $(patsubst src/iplus1c/%,%,$(C_SRC))
