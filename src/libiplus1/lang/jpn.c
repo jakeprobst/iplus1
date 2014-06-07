@@ -9,7 +9,6 @@
 
 typedef struct iplus1_japanese_t {
     mecab_t* mecab;
-    
 } iplus1_japanese_t;
 
 int valid_word(char* s, const mecab_node_t* node)
@@ -22,11 +21,11 @@ int valid_word(char* s, const mecab_node_t* node)
     if (node->posid == 25) {                      // 25: 助動詞 aux verbs
         return 0;                                 //  3: 記号,アルファベット alphabet
     }                                             //  4: 記号,一般 general
-    if (3 <= node->posid && node->posid <= 9) {   //  5: 記号,括弧開: paren open
+    if (3 <= node->posid && node->posid <= 9) {   //  5: 記号,括弧開 paren open
         return 0;                                 //  6: 記号,括弧閉 paren close
-    }                                             //  7: 記号,句点: period
-                                                  //  8: 記号,空白: whitespace
-    return 1;                                     //  9: 記号,読点: comma
+    }                                             //  7: 記号,句点 period
+                                                  //  8: 記号,空白 whitespace
+    return 1;                                     //  9: 記号,読点 comma
 }
 
 char** parse(char* str, void* param)
@@ -84,7 +83,6 @@ int init(iplus1_lang_t* lang)
     
     iplus1_japanese_t* jpn = (iplus1_japanese_t*)lang->param;
     jpn->mecab = mecab_new(0, NULL);
-    
     
     return IPLUS1_SUCCESS;
 }
