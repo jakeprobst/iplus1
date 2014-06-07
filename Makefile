@@ -34,7 +34,7 @@ libiplus1.so: build/libiplus1 $(LIB_OBJ)
 # language plugins
 
 LANG_CFLAGS = -fPIC -ggdb -Wall -Werror -Isrc/libiplus1 `pkg-config --cflags icu-uc`
-LANG_LDFLAGS = -fPIC -L. -liplus1 -lstemmer `pkg-config --libs icu-uc`
+LANG_LDFLAGS = -fPIC -L. -liplus1 -lstemmer `pkg-config --libs icu-uc` -lmecab
 
 LANG_SRC = $(wildcard src/libiplus1/lang/*.c)
 LANG_OSRC = $(patsubst src/libiplus1/lang/%,%,$(LANG_SRC))
@@ -69,8 +69,8 @@ iplus1d: build/iplus1d $(D_OBJ)
 
 # iplus1c
 
-C_CFLAGS = -ggdb -Wall -Werror -Isrc/libiplus1
-C_LDFLAGS = -L. -liplus1
+C_CFLAGS = -ggdb -Wall -Werror -Isrc/libiplus1 `pkg-config --cflags icu-uc`
+C_LDFLAGS = -L. -liplus1 `pkg-config --libs icu-uc`
 
 C_SRC = $(wildcard src/iplus1c/*.c)
 C_OSRC = $(patsubst src/iplus1c/%,%,$(C_SRC))
