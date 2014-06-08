@@ -88,6 +88,7 @@ iplus1_tree_node_t* _tree_insert(iplus1_tree_node_t* root, iplus1_tree_node_t* n
     }
     else {
         // equal, just ignore it I guess. (this shouldnt happen)
+        // memory leak if an item is added where a key already exists
     }
     
     root->height = _max(_height(root->right), _height(root->left)) + 1;
