@@ -53,6 +53,7 @@ int _iplus1_load_languages(iplus1_t* iplus1)
                 return IPLUS1_FAIL;
             }
             if (iplus1_lang_init(iplus1->language[lindex], path) == IPLUS1_FAIL) {
+                fprintf(stderr, "could not load: %s\n", path);
                 count--;
                 free(iplus1->language[lindex]);
             }
