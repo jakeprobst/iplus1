@@ -62,9 +62,8 @@ char** parse(char* str, void* param)
         output[i] = calloc(sizeof(char), node->length + 1);
         strncpy(output[i], node->surface, node->length);
         if (!valid_word(output[i], node)) {
-            if (node->posid != 7)
-                printf("not valid: %s %d\n", output[i], node->posid);
             free(output[i]);
+            output[i] = NULL;
             i--;
         }
     }
