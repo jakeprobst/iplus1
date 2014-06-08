@@ -18,13 +18,13 @@ int iplus1_sentence_init(iplus1_sentence_t* sen, iplus1_lang_t* lang, char* str)
     sen->str = strdup(str);
     sen->words = iplus1_lang_parse(lang, str);
     if (sen->words == NULL) {
+        fprintf(stderr, "iplus1_sentence_init: could not parse '%s'\n", str);
         free(sen->str);
         return IPLUS1_FAIL;
     }
     sen->trans_count = 0;
     sen->translations = malloc(sizeof(iplus1_list_t));
     iplus1_list_init(sen->translations);
-    //sen->translations = calloc(sizeof(iplus1_sentence_t*), 1);
     
     return IPLUS1_SUCCESS;
 }
@@ -52,12 +52,6 @@ int iplus1_sentence_add_translation(iplus1_sentence_t* original, iplus1_sentence
     original->trans_count++;
     
     iplus1_list_append(original->translations, translated);
-    
-    /*original->translations = realloc(original->translations, (original->trans_count + 1) *sizeof(iplus1_sentence_t*));
-    if (original->translations == NULL)
-        return IPLUS1_FAIL;
-    original->translations[original->trans_count-1] = translated;
-    original->translations[original->trans_count] = NULL;*/
     
     return original->trans_count;
 }
