@@ -9,13 +9,6 @@
 #include "iplus1.h"
 #include "lang.h"
 
-
-
-
-
-
-
-
 int iplus1_lang_init(iplus1_lang_t* lang, char* path)
 {
     void* handle;

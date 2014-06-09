@@ -14,8 +14,6 @@ int iplus1_list_init(iplus1_list_t* list)
     return IPLUS1_SUCCESS;
 }
 
-
-
 int iplus1_list_append(iplus1_list_t* list, void* data)
 {
     iplus1_list_node_t* node = malloc(sizeof(iplus1_list_node_t));
@@ -34,7 +32,6 @@ int iplus1_list_append(iplus1_list_t* list, void* data)
     return IPLUS1_SUCCESS;
 }
 
-
 int iplus1_list_foreach(iplus1_list_t* list, int (*func)(void*, void*), void* param)
 {
     iplus1_list_node_t* node;
@@ -44,7 +41,6 @@ int iplus1_list_foreach(iplus1_list_t* list, int (*func)(void*, void*), void* pa
     
     return IPLUS1_SUCCESS;
 }
-
 
 int iplus1_list_destroy(iplus1_list_t* list)
 {

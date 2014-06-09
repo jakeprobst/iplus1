@@ -112,8 +112,6 @@ iplus1_tree_node_t* _tree_insert(iplus1_tree_node_t* root, iplus1_tree_node_t* n
     return root;
 }
 
-
-
 int iplus1_tree_insert(iplus1_tree_t* tree, void* key, void* value)
 {
     iplus1_tree_node_t* node = malloc(sizeof(iplus1_tree_node_t));
@@ -148,7 +146,6 @@ void* iplus1_tree_get(iplus1_tree_t* tree, void* key)
     }
     return NULL;
 }
-
 
 int _iplus1_tree_node_foreach_inorder(iplus1_tree_node_t* node, int (*func)(void*, void*), void* param)
 {

@@ -16,7 +16,6 @@ typedef struct iplus1_lang_t {
     int (*destroy)(struct iplus1_lang_t*);
     
     void* dlhandle;
-    
 } iplus1_lang_t;
 
 

@@ -6,10 +6,7 @@
 
 typedef struct iplus1_word_t {
     char* str;
-    
-    int sen_count;
-    //iplus1_sentence_t** sentences; // NULL terminated
-    iplus1_list_t* sentences;
+    iplus1_list_t* sentences; // iplus1_sentence_t*
 } iplus1_word_t;
 
 

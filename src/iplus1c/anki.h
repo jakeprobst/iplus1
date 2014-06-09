@@ -9,9 +9,6 @@ typedef struct anki_t {
 } anki_t;
 
 
-
-
-
 int anki_init(anki_t*, char*);
 int anki_destroy(anki_t*);
 

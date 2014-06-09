@@ -9,12 +9,6 @@
 
 
 
-
-
-
-
-
-
 int _iplus1_load_languages(iplus1_t* iplus1)
 {
     // TODO: later on this should use the PREFIX variable

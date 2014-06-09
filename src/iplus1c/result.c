@@ -11,9 +11,6 @@ int _free_str(void* str, void* param)
 }
 
 
-
-
-
 int search_result_init(search_result_t* result)
 {
     result->original = NULL;
@@ -23,7 +20,6 @@ int search_result_init(search_result_t* result)
     
     return 0;
 }
-
 
 int search_result_destroy(search_result_t* result)
 {

@@ -7,7 +7,7 @@
 typedef struct search_result_t {
     char* original;
     char* translated;
-    iplus1_list_t* new_words;
+    iplus1_list_t* new_words; // iplus1_word_t*
 } search_result_t;
 
 int search_result_init(search_result_t*);

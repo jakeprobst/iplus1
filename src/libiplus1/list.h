@@ -8,18 +8,11 @@ typedef struct iplus1_list_node_t {
     struct iplus1_list_node_t* next;
 } iplus1_list_node_t;
 
-
-
-
 typedef struct iplus1_list_t {
     int length;
     iplus1_list_node_t* node;
     iplus1_list_node_t* last;
 } iplus1_list_t;
-
-
-
-
 
 
 int iplus1_list_init(iplus1_list_t*);

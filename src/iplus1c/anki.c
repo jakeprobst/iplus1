@@ -5,16 +5,6 @@
 
 #include "iplus1.h"
 
-
-
-
-
-
-
-
-
-
-
 int anki_init(anki_t* anki, char* path)
 {
     if (sqlite3_open(path, &anki->db)) {
@@ -22,11 +12,8 @@ int anki_init(anki_t* anki, char* path)
         sqlite3_close(anki->db);
         return IPLUS1_FAIL;
     }
-
-    
     
     return IPLUS1_SUCCESS;
-    
 }
 
 int anki_destroy(anki_t* anki)
@@ -90,10 +77,8 @@ int _foreach_callback(void* param, int argc, char** argv, char** colname)
     return 0;
 }
 
-
 int anki_foreach(anki_t* anki, int (*func)(char*, void*), void* param)
 {
-    
     int _subfunc(char* s)
     {
         return func(s, param);
@@ -106,8 +91,6 @@ int anki_foreach(anki_t* anki, int (*func)(char*, void*), void* param)
         sqlite3_free(errmsg);
         return IPLUS1_FAIL;
     }
-    
-    
     
     return IPLUS1_SUCCESS;
 }

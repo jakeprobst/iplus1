@@ -10,10 +10,7 @@ typedef struct iplus1_sentence_t {
     char lang[4];
     char* str;
     char** words;
-    
-    int trans_count;
-    //struct iplus1_sentence_t** translations; // NULL terminated
-    iplus1_list_t* translations;
+    iplus1_list_t* translations; // iplus1_sentence_t*
 } iplus1_sentence_t;
 
 
