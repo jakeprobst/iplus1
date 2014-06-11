@@ -5,7 +5,7 @@ PREFIX=/usr/local/
 LIB_VERSION = 1.0.0
 LIB_SHORTVER = 1
 
-all: libiplus1.so languages iplus1c
+all: libiplus1.so languages iplus1d iplus1c
 
 build:
 	mkdir build/
@@ -47,6 +47,25 @@ lang/%.so: src/libiplus1/lang/%.c
 	$(CXX) -shared $(LANG_CFLAGS) $(LANG_LDFLAGS) -o $@ $<
 
 languages: lang $(LANG_OBJ)
+	
+
+# iplus1d
+
+D_CFLAGS = -ggdb -Wall -Werror -Isrc/libiplus1 `pkg-config --cflags icu-uc`
+D_LDFLAGS = -L. -liplus1 `pkg-config --libs icu-uc`
+
+D_SRC = $(wildcard src/iplus1d/*.c)
+D_OSRC = $(patsubst src/iplus1d/%,%,$(D_SRC))
+D_OBJ = $(foreach obj, $(D_OSRC:.c=.o), build/iplus1d/$(obj))
+
+build/iplus1d: build
+	mkdir -p build/iplus1d
+
+build/iplus1d/%.o: src/iplus1d/%.c
+	$(CXX) -c $(D_CFLAGS) -o $@ $<
+
+iplus1d: build/iplus1d $(D_OBJ) 
+	$(CXX) -o $@ $(D_OBJ) $(D_LDFLAGS)
 
 # iplus1c
 
@@ -68,4 +87,4 @@ iplus1c: build/iplus1c $(C_OBJ)
 
 clean:
 	rm -r build lang
-	rm libiplus1.so* iplus1c
+	rm libiplus1.so* iplus1c iplus1d
