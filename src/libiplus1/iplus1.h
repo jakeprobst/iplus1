@@ -8,16 +8,18 @@ enum {
 
 struct iplus1_lang_t;
 
-typedef struct iplus1_t {
+/*typedef struct iplus1_t {
     struct iplus1_lang_t** language;
     
-} iplus1_t;
+} iplus1_t;*/
 
 
-int iplus1_init(iplus1_t*);
-int iplus1_destroy(iplus1_t*);
+//int iplus1_init(iplus1_t*);
+//int iplus1_destroy(iplus1_t*);
+int ipluis1_init();
+int iplus1_destroy();
 
-struct iplus1_lang_t* iplus1_get_lang(iplus1_t*, char*);
+struct iplus1_lang_t* iplus1_get_lang(char*);
 
 
 

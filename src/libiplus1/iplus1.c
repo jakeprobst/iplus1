@@ -6,10 +6,10 @@
 #include "iplus1.h"
 #include "lang.h"
 
+struct iplus1_lang_t** languages;
 
 
-
-int _iplus1_load_languages(iplus1_t* iplus1)
+int _iplus1_load_languages()
 {
     // TODO: later on this should use the PREFIX variable
     // but for now I`ll just hardcode it where they are locally
@@ -33,7 +33,7 @@ int _iplus1_load_languages(iplus1_t* iplus1)
         return IPLUS1_FAIL;
     }
     
-    iplus1->language = calloc(count, sizeof(iplus1_lang_t*));
+    languages = calloc(count, sizeof(iplus1_lang_t*));
     
     int lindex = 0;
     rewinddir(dir);
@@ -42,14 +42,14 @@ int _iplus1_load_languages(iplus1_t* iplus1)
             char path[FILENAME_MAX];
             snprintf(path, FILENAME_MAX, "%s%s", "lang/", dp->d_name);
             
-            iplus1->language[lindex] = malloc(sizeof(iplus1_lang_t));
-            if (iplus1->language[lindex] == NULL) {
+            languages[lindex] = malloc(sizeof(iplus1_lang_t));
+            if (languages[lindex] == NULL) {
                 return IPLUS1_FAIL;
             }
-            if (iplus1_lang_init(iplus1->language[lindex], path) == IPLUS1_FAIL) {
+            if (iplus1_lang_init(languages[lindex], path) == IPLUS1_FAIL) {
                 fprintf(stderr, "could not load: %s\n", path);
                 count--;
-                free(iplus1->language[lindex]);
+                free(languages[lindex]);
             }
             else {
                 lindex++;
@@ -62,36 +62,36 @@ int _iplus1_load_languages(iplus1_t* iplus1)
 }
 
 
-iplus1_lang_t* iplus1_get_lang(iplus1_t* iplus1, char* lang)
+iplus1_lang_t* iplus1_get_lang(char* lang)
 {
     int i;
-    for(i = 0; iplus1->language[i] != NULL; i++) {
-        if (strncmp(iplus1->language[i]->lang, lang, 3) == 0) {
-            return iplus1->language[i];
+    for(i = 0; languages[i] != NULL; i++) {
+        if (strncmp(languages[i]->lang, lang, 3) == 0) {
+            return languages[i];
         }
     }
     
     return NULL;
 }
 
-int iplus1_init(iplus1_t* iplus1)
+int iplus1_init()
 {    
-    if (_iplus1_load_languages(iplus1) == IPLUS1_FAIL) {
+    if (_iplus1_load_languages() == IPLUS1_FAIL) {
         return IPLUS1_FAIL;
     }
     
     return IPLUS1_SUCCESS;
 }
 
-int iplus1_destroy(iplus1_t* iplus1)
+int iplus1_destroy()
 {
     int i;
-    for(i = 0; iplus1->language[i] != NULL; i++) {
-        iplus1_lang_destroy(iplus1->language[i]);
-        free(iplus1->language[i]);
+    for(i = 0; languages[i] != NULL; i++) {
+        iplus1_lang_destroy(languages[i]);
+        free(languages[i]);
     }
     
-    free(iplus1->language);
+    free(languages);
     
     return IPLUS1_SUCCESS;
 }
