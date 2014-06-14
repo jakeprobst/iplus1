@@ -58,7 +58,7 @@ void usage(char* name)
 
 void list_languages()
 {
-    iplus1_t iplus1;
+    /*iplus1_t iplus1;
     iplus1_init(&iplus1);
     
     int i;
@@ -66,7 +66,7 @@ void list_languages()
         printf("%s\t%s\n", iplus1.language[i]->lang, iplus1.language[i]->full_lang);
     }
     
-    iplus1_destroy(&iplus1);
+    iplus1_destroy(&iplus1);*/
 }
 
 char* readline(FILE* fd)
@@ -239,17 +239,17 @@ int main(int argc, char** argv)
         return -1;
     }
     
-    iplus1_t iplus1;
-    iplus1_init(&iplus1);
+    //iplus1_t iplus1;
+    iplus1_init();
     
     iplus1_lang_t* native_lang;
     iplus1_lang_t* target_lang;
     
-    if ((native_lang = iplus1_get_lang(&iplus1, nlang)) == NULL) {
+    if ((native_lang = iplus1_get_lang(nlang)) == NULL) {
         fprintf(stderr, "%s not a valid language\n", native_lang->lang);
         return -1;
     }
-    if ((target_lang = iplus1_get_lang(&iplus1, tlang)) == NULL) {
+    if ((target_lang = iplus1_get_lang(tlang)) == NULL) {
         fprintf(stderr, "%s not a valid language\n", target_lang->lang);
         return -1;
     }
@@ -324,7 +324,7 @@ int main(int argc, char** argv)
     
     
     anki_destroy(&anki_deck);
-    iplus1_destroy(&iplus1);
+    iplus1_destroy();
     
     u_cleanup();
     return 0;
