@@ -16,7 +16,7 @@ struct iplus1_lang_t;
 
 //int iplus1_init(iplus1_t*);
 //int iplus1_destroy(iplus1_t*);
-int ipluis1_init();
+int iplus1_init();
 int iplus1_destroy();
 
 struct iplus1_lang_t* iplus1_get_lang(char*);
