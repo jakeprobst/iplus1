@@ -14,8 +14,11 @@
 // mashed my keyboard till a legit port came up
 #define PORT "51945"
 #define MAX_EVENTS 16
-#define BUFFER_SIZE 1024*4
 
+// this can probably be smaller, I think the sentence spec says 
+// a single sentence can be at most 512 chars...
+//#define BUFFER_SIZE 1024*4
+#define BUFFER_SIZE 1024
 
 
 void printbuf(char* buf, int size)
@@ -130,7 +133,7 @@ int input_init(input_t* input)
     
     struct epoll_event event;
     event.data.fd = input->listen_fd;
-    event.events = EPOLLIN | EPOLLET;
+    event.events = EPOLLIN;
     if (epoll_ctl(input->epoll_fd, EPOLL_CTL_ADD, input->listen_fd, &event) == -1) {
         fprintf(stderr, "input_init: epoll_ctl: %s\n", strerror(errno));
         return -1;
@@ -240,47 +243,37 @@ int input_parse_data(input_t* input, int fd)
     
     int size = 0;
     for(;;) {
-        memset(buf, 0, BUFFER_SIZE);
+        memset(buf, 0xFF, BUFFER_SIZE);
         size = recv(fd, buf, BUFFER_SIZE, MSG_PEEK);
         if (size <= 0) {
             close(fd);
             return 0;
         }
-        //printbuf(buf, size);
-        int i;
-        for(i = 0; i < size-1; i++) {
-            if (buf[i] == '\0' && buf[i+1] == '\0') {
-                fprintf(stderr, "malformed input: 2 NILs in a row\n");
-                recv(fd, buf, BUFFER_SIZE, 0);
-                return -1;
+        
+        printbuf(buf, size-1);
+        int i, ok = 0;
+        for(i = 0; i < size; i++) {
+            if (buf[i] == '\0') {
+                ok = 1;
             }
+        }
+        if (!ok) {
+            fprintf(stderr, "malformed input, not NIL terminated\n");
+            return -1;
         }
         
-        int offset = 0;
-        for(;;) {
-            int z;
-            for(z = offset; z < size; z++) {
-                if (buf[z] == '\0') {
-                    break;
-                }
-            }
-            if (z == size) { // buffer ends mid-command, so quit the loop and get more data later
-                recv(fd, buf, offset, 0);
-                break;
-            }
-            
-            printf("offset: %d\n", offset);
-            if ((z = parse_line(buf+offset, &cmd)) == -1) {
-                fprintf(stderr, "invalid data: '%s' %d\n", buf+offset, offset);
-                offset += strlen(buf+offset)+1;
-            } 
-            else {
-                offset += z;
-                cmd.fd = fd;
-                input->callback(&cmd, input->callback_param);
-            }
-            command_destroy(&cmd);
+        int z = parse_line(buf, &cmd);
+        if (z == -1) {
+            fprintf(stderr, "invalid data: '%s'\n", buf);
+            z = strlen(buf) + 1;
         }
+        else {
+            cmd.fd = fd;
+            input->callback(&cmd, input->callback_param);
+        }
+        
+        command_destroy(&cmd);
+        recv(fd, buf, z, 0);
     }
     
     return 0;
