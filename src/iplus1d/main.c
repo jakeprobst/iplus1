@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <unicode/uclean.h>
+
 
 #include "input.h"
 //#include "redisdb.h"
@@ -13,7 +15,10 @@
 
 int handle_input(command_t* cmd, void* param)
 {
-    
+    printf("cmd: %d\n", cmd->type);
+    if (cmd->type == CMD_SENTENCE) {
+        printf("sen: %s\n", cmd->sen.sen);
+    }
     
     
     
@@ -39,5 +44,6 @@ int main(int argc, char** argv)
     input_loop(&input);
     
     input_destroy(&input);
+    u_cleanup();
     return 0;
 }

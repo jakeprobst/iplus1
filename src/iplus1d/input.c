@@ -18,6 +18,37 @@
 
 
 
+void printbuf(char* buf, int size)
+{
+    int l, i;
+    for(l = 0; l < (size/16)+1; l++) {
+        printf("|");
+        for(i = 0; i < 16; i++) {
+            if ((l*16 + i) > size) {
+                printf("   ");
+            }
+            else {
+                printf("%.2X ", buf[(l*16 + i)]);
+            }
+        }
+        printf("|");
+        for(i = 0; i < 16; i++) {
+            if ((l*16 + i) > size) {
+                printf(" ");
+            }
+            else {
+                if (0x20 < buf[(l*16 + i)] && buf[(l*16 + i)] < 0x7F) {
+                    printf("%c", buf[(l*16 + i)]);
+                }
+                else {
+                    printf(".");
+                }
+            }
+        }
+        printf("|\n");
+    }
+    
+}
 
 int set_socket_nonblocking(int fd)
 {
@@ -57,6 +88,9 @@ int make_bind_socket()
         if ((fd = socket(r->ai_family, r->ai_socktype, r->ai_protocol)) == -1) {
             continue;
         }
+        
+        int yes = 1;
+        setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)); 
         
         if (bind(fd, r->ai_addr, r->ai_addrlen) == 0) {
             break;
@@ -158,36 +192,44 @@ int input_accept_connection(input_t* input)
     return 0;
 }
 
-int parse_line(char* line, command_t* cmd)
+int parse_line(char* in_line, command_t* cmd)
 {
+    char* line = strdup(in_line);
     char* pos;
     char* s = strtok_r(line, "\t", &pos);
+    
     if (s == NULL) {
-        return -1;
+        goto error;
     }
     if (strcmp(s, "SEN") == 0) {
         cmd->type = CMD_SENTENCE;
+        cmd->sen.sen = NULL;
         
         s = strtok_r(NULL, "\t", &pos);
         if (s == NULL) {
-            return -1;
+            goto error;
         }
         cmd->sen.id = atoi(s);
         
         s = strtok_r(NULL, "\t", &pos);
         if (s == NULL) {
-            return -1;
+            goto error;
         }
         strncpy(cmd->sen.lang, s, 4);
         
         s = strtok_r(NULL, "\t", &pos);
         if (s == NULL) {
-            return -1;
+            goto error;
         }
         cmd->sen.sen = strdup(s);
     }
     
-    return 1;
+    free(line);
+    return strlen(in_line)+1;
+    
+error:
+    free(line);
+    return -1;
 }
 
 
@@ -198,11 +240,24 @@ int input_parse_data(input_t* input, int fd)
     
     int size = 0;
     for(;;) {
+        memset(buf, 0, BUFFER_SIZE);
         size = recv(fd, buf, BUFFER_SIZE, MSG_PEEK);
+        if (size <= 0) {
+            close(fd);
+            return 0;
+        }
+        //printbuf(buf, size);
+        int i;
+        for(i = 0; i < size-1; i++) {
+            if (buf[i] == '\0' && buf[i+1] == '\0') {
+                fprintf(stderr, "malformed input: 2 NILs in a row\n");
+                recv(fd, buf, BUFFER_SIZE, 0);
+                return -1;
+            }
+        }
         
+        int offset = 0;
         for(;;) {
-            int offset = 0;
-            
             int z;
             for(z = offset; z < size; z++) {
                 if (buf[z] == '\0') {
@@ -210,17 +265,20 @@ int input_parse_data(input_t* input, int fd)
                 }
             }
             if (z == size) { // buffer ends mid-command, so quit the loop and get more data later
-                recv(fd, buf, size, 0);
+                recv(fd, buf, offset, 0);
                 break;
             }
             
+            printf("offset: %d\n", offset);
             if ((z = parse_line(buf+offset, &cmd)) == -1) {
-                fprintf(stderr, "invalid data: '%s'\n", buf+offset);
-                continue;
+                fprintf(stderr, "invalid data: '%s' %d\n", buf+offset, offset);
+                offset += strlen(buf+offset)+1;
+            } 
+            else {
+                offset += z;
+                cmd.fd = fd;
+                input->callback(&cmd, input->callback_param);
             }
-            offset += z;
-            cmd->fd = fd;
-            input->callback(&cmd, input->callback_param);
             command_destroy(&cmd);
         }
     }
@@ -243,6 +301,7 @@ int input_loop(input_t* input)
         for(i = 0; i < n; i++) {
             if (events[i].events & (EPOLLERR | EPOLLHUP)) {
                 fprintf(stderr, "epoll error\n");
+                epoll_ctl(input->epoll_fd, EPOLL_CTL_DEL, events[i].data.fd, &events[i]);
                 close(events[i].data.fd);
             }
             else if (events[i].data.fd == input->listen_fd) {
