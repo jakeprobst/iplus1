@@ -68,7 +68,7 @@ char* iplus1_lang_lowercase(char* str)
     
     u_strToLower(uc, len+1, uc, u_strlen(uc), "", &error);
     if (U_FAILURE(error)) {
-        fprintf(stderr, "iplus1_lang_lowercase:u_strToUpper error: %d\n", error);
+        fprintf(stderr, "iplus1_lang_lowercase:u_strToLower error: %d\n", error);
         return NULL;
     }
 
