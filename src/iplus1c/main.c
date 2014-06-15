@@ -33,27 +33,25 @@ int connect_to_server()
         fprintf(stderr, "connect: %s\n", strerror(errno));
         return -1;
     }
-        
+    
+    freeaddrinfo(res);
     return fd;
 }
 
 
 int main(int argc, char** argv)
 {
-    iplus1_init();
-
-
     int fd = connect_to_server();
     if (fd == -1) {
         fprintf(stderr, "couldn`t connect to server\n");
         return -1;
     }
     
-    char* str = "SEN\t123\teng\thuehuehuehu\0SEN\t124\tengblahblahblah";
-    printf("%s (%ld, %ld)\n", str, strlen(str), (strlen(str)*2) +2);
-    send(fd, str, (strlen(str)*2) + 2, 0);
+    char* str = "SEN\t123\teng\thuehuehuehu\0SEN\t124\teng\tblahblahblah\0";
+    printf("%s (%ld, %ld)\n", str, strlen(str), (strlen(str)*2) +3);
+    send(fd, str, (strlen(str)*2) + 3, 0);
     
-    send(fd, str, (strlen(str)*2) + 2, 0);
+    send(fd, str, (strlen(str)*2) + 3, 0);
 
     /*char* pos;
     char* s = strdup("a s d f");
@@ -69,10 +67,6 @@ int main(int argc, char** argv)
 
 
 
-
-
-    
-
-    iplus1_destroy();
+    close(fd);
     return 0;
 }
