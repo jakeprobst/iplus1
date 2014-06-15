@@ -26,11 +26,11 @@ int valid_word(char* s)
     return 1;
 }
 
-char** parse(char* pstr, void* param)
+char** parse(char* tstr, void* param)
 {
     iplus1_german_t* deu = (iplus1_german_t*)param;
     
-    char* str = iplus1_lang_lowercase(pstr);
+    char* str = iplus1_lang_lowercase(tstr);
     if (str == NULL) {
         return NULL;
     }
@@ -45,6 +45,7 @@ char** parse(char* pstr, void* param)
     }
     char** output = calloc(sizeof(char*), output_size);
     if (output == NULL) {
+        free(str);
         return NULL;
     }
     
@@ -61,6 +62,7 @@ char** parse(char* pstr, void* param)
             for (n = 0; n < output_index; n++) {
                 free(output[n]);
             }
+            free(str);
             free(output);
             return NULL;
         }
