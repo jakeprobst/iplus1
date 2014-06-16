@@ -17,6 +17,6 @@ make install
 
 #### Build on Ubuntu
 ```
-sudo apt-get install libicu-dev libstemmer-dev libmecab-dev sqlite3 libhiredis-dev
+sudo apt-get install libicu-dev libstemmer-dev libmecab-dev libsqlite3-dev libhiredis-dev
 make
 ```
