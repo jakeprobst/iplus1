@@ -5,9 +5,8 @@
 // it on wikipedia. it seems to be correct.
 // used for reference:
 // http://www.geeksforgeeks.org/avl-tree-set-1-insertion/ 
+// http://www.geeksforgeeks.org/avl-tree-set-2-deletion/
 // http://www.eternallyconfuzzled.com/tuts/datastructures/jsw_tut_avl.aspx
-
-// no remove function cause it isn`t needed and I`m lazy
 
 typedef struct iplus1_tree_node_t {
     void* key;
@@ -38,9 +37,10 @@ int iplus1_tree_foreach_inorder(iplus1_tree_t*, int (*func)(void*, void*), void*
 int iplus1_tree_foreach_postorder(iplus1_tree_t*, int (*func)(void*, void*), void*);
 
 
+int iplus1_tree_compare_int(void*, void*);
+int iplus1_tree_compare_str(void*, void*);
 
-
-
+int iplus1_tree_free(void*, void*);
 
 
 

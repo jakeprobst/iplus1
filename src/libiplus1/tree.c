@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "iplus1.h"
 #include "tree.h"
@@ -181,6 +182,22 @@ int iplus1_tree_foreach_postorder(iplus1_tree_t* tree, int (*func)(void*, void*)
     return IPLUS1_SUCCESS;
 }
 
+int iplus1_tree_compare_int(void* a, void* b)
+{
+    int* at = a;
+    int* bt = b;
+    return *at - *bt;
+}
 
+int iplus1_tree_compare_str(void* a, void* b)
+{
+    char* at = a;
+    char* bt = b;
+    return strcmp(at, bt);
+}
 
-
+int iplus1_tree_free(void* data, void* param)
+{
+    free(data);
+    return 0;
+}
