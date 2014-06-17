@@ -27,19 +27,19 @@ int iplus1_collection_init(iplus1_collection_t* col)
     return IPLUS1_SUCCESS;
 }
 
-int _free_sentences(void* p, void* param)
+int _free_sentences(void* k, void* v, void* param)
 {
-    iplus1_sentence_t* sen = (iplus1_sentence_t*)p;
+    iplus1_sentence_t* sen = (iplus1_sentence_t*)v;
     iplus1_sentence_destroy(sen);
-    free(p);
+    free(v);
     return IPLUS1_SUCCESS;
 }
 
-int _free_words(void* p, void* param)
+int _free_words(void* k, void* v, void* param)
 {
-    iplus1_word_t* word = (iplus1_word_t*)p;
+    iplus1_word_t* word = (iplus1_word_t*)v;
     iplus1_word_destroy(word);
-    free(p);
+    free(v);
     return IPLUS1_SUCCESS;
 }
 
