@@ -13,6 +13,35 @@
 #define PORT "51945"
 
 
+char* readline(FILE* fd)
+{
+    int len = 0;
+    int start = ftell(fd);
+    
+    while(1) {
+        int c = fgetc(fd);
+        if (c == '\n' || c == EOF) {
+            break;
+        }
+        len++;
+    }
+    
+    if (len == 0) {
+        return NULL;
+    }
+    
+    char* buf = malloc(len+1);
+    fseek(fd, start, SEEK_SET);
+    fread(buf, len, 1, fd);
+    buf[len] = '\0';
+    
+    fgetc(fd); // get that linebreak out of there
+        
+    return buf;
+}
+
+
+
 int connect_to_server()
 {
     struct addrinfo hint, *res;
@@ -47,26 +76,34 @@ int main(int argc, char** argv)
         return -1;
     }
     
-    char* str = "SEN\t123\teng\thuehuehuehu\0SEN\t124\teng\tblahblahblah\0";
-    printf("%s (%ld, %ld)\n", str, strlen(str), (strlen(str)*2) +3);
-    send(fd, str, (strlen(str)*2) + 3, 0);
+    FILE* sentences = fopen("sentences.csv", "r");
+    char buf[2048];
+    char* line;
+    while((line = readline(sentences)) != NULL) {
+        int l = snprintf(buf, 2048, "SEN\t%s", line) + 1;
+        send(fd, buf, l, 0);
+        free(line);
+    }
+    fclose(sentences);
     
-    send(fd, str, (strlen(str)*2) + 3, 0);
+    FILE* links = fopen("data/links.csv", "r");
+    while((line = readline(links)) != NULL) {
+        int l = snprintf(buf, 2048, "LINK\t%s", line) + 1;
+        send(fd, buf, l, 0);
+        free(line);
+    }
 
-    /*char* pos;
-    char* s = strdup("a s d f");
-    char* z = strtok_r(s, " ", &pos);
-    printf("z: %s\n", z);
-    z = strtok_r(NULL, " ", &pos);
-    printf("z: %s\n", z);
-    z = strtok_r(NULL, " ", &pos);
-    printf("z: %s\n", z);
-    z = strtok_r(NULL, " ", &pos);
-    printf("z: %s\n", z);
-    printf("s: %s\n", s);*/
+    int l = snprintf(buf, 2048, "QUIT") + 1;
+    send(fd, buf, l, 0);
 
-
-
+    
     close(fd);
     return 0;
 }
+
+
+
+
+
+
+
