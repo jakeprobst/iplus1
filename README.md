@@ -34,7 +34,7 @@ First, retrieve fresh data:
 Then start the server (no initial output, just let it sit in its own terminal for instance):
 
 ```
-./iplus1d
+LD_LIBRARY_PATH=. ./iplus1d
 ```
 
 # Client
