@@ -128,7 +128,7 @@ int destroy(iplus1_lang_t* lang)
 {
     iplus1_english_t* eng = (iplus1_english_t*)lang->param;
     
-    iplus1_tree_foreach_postorder(eng->stopwords, &iplus1_tree_free, NULL);
+    iplus1_tree_foreach_postorder(eng->stopwords, &iplus1_tree_free_key, NULL);
     iplus1_tree_destroy(eng->stopwords);
     free(eng->stopwords);
     
