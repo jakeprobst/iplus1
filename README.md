@@ -20,3 +20,25 @@ make install
 sudo apt-get install libicu-dev libstemmer-dev libmecab-dev libsqlite3-dev libhiredis-dev
 make
 ```
+
+## Usage
+
+# Server
+
+First, retrieve fresh data:
+
+```
+./preparefiles.py
+```
+
+Then start the server (no initial output, just let it sit in its own terminal for instance):
+
+```
+./iplus1d
+```
+
+# Client
+
+```
+LD_LIBRARY_PATH=. ./iplus1c
+```
