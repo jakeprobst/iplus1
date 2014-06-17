@@ -4,46 +4,157 @@
 
 #include <unicode/uclean.h>
 
+#include "iplus1.h"
+#include "lang.h"
+#include "list.h"
+#include "tree.h"
 
 #include "input.h"
-//#include "redisdb.h"
+#include "redis.h"
 
 
 
+int handle_sentence(command_t* cmd, redis_t* redis)
+{
+    iplus1_lang_t* lang = iplus1_get_lang(cmd->sen.lang);
+    if (lang == NULL) {
+        //not supported lang
+        return -1;
+    }
+    
+    char** token = iplus1_lang_parse(lang, cmd->sen.sen);
+    if (token == NULL) {
+        // could not parse
+        return -1;
+    }
+    if (token[0] == NULL) { // there are sentences that actually have no tokens!
+        free(token);
+        return 0;
+    }
+        
+    int tokenlen = 1;
+    int i;
+    for(i = 0; token[i]; i++) {
+        tokenlen += strlen(token[i]) + 1; // append a comma
+    }
+        
+    char tokenbuf[tokenlen];
+    memset(tokenbuf, 0, tokenlen);
+    strncat(tokenbuf, token[0], tokenlen);
+    for(i = 1; token[i]; i++) {
+        strncat(tokenbuf, ",", tokenlen);
+        strncat(tokenbuf, token[i], tokenlen);
+    }
+    
+    redis_command(redis, "HSET %s %d %s", cmd->sen.lang, cmd->sen.id, tokenbuf);
+    printf("HSET %s %d %s\n", cmd->sen.lang, cmd->sen.id, tokenbuf);
+    if (redis->reply->type == REDIS_REPLY_ERROR) {
+        printf("error: %s\n", redis->reply->str);
+    }
+    
+    if (token) {
+        for(i = 0; token[i] != NULL; i++) {
+            free(token[i]);
+        }
+        free(token);
+    }
+    
+    return 0;
+}
 
-
+int handle_link(command_t* cmd, redis_t* redis)
+{
+    
+    if (iplus1_get_lang(cmd->link.lang) == NULL || iplus1_get_lang(cmd->link.tlang) == NULL) {
+        //not supported lang
+        return -1;
+    }
+    
+    char table[32];
+    snprintf(table, 32, "%s-%s", cmd->link.lang, cmd->link.tlang);
+    
+    redis_command(redis, "HSET %s %d %d", table, cmd->link.id, cmd->link.tid);
+    printf("HSET %s %d %d\n", table, cmd->link.id, cmd->link.tid);
+    if (redis->reply->type == REDIS_REPLY_ERROR) {
+        printf("error: %s\n", redis->reply->str);
+    }
+    
+    return 0;
+}
 
 int handle_input(command_t* cmd, void* param)
 {
-    printf("cmd: %d\n", cmd->type);
     if (cmd->type == CMD_SENTENCE) {
-        printf("sen: %s\n", cmd->sen.sen);
+        handle_sentence(cmd, param);
     }
-    
-    
+    if (cmd->type == CMD_LINK) {
+        handle_link(cmd, param);
+    }
     
     
     
     return 0;
 }
 
-
+int free_tokens(void* k, void* v, void* param)
+{
+    free(k);
+    iplus1_list_t* list = v;
+    iplus1_list_node_t* l;
+    for(l = list->node; l; l = l->next) {
+        free(l->data);
+    }
+    iplus1_list_destroy(list);
+    
+    free(list);
+    return 0;
+}
 
 
 int main(int argc, char** argv)
 {
+    iplus1_init();
+    
+    redis_t redis;
+    if (redis_init(&redis, NULL, -1) == -1) {
+        fprintf(stderr, "could not init redis\n");
+        return -1;
+    }
+    
+    /*iplus1_tree_t words;
+    iplus1_tree_init(&words, &iplus1_tree_compare_str);*/
     
     input_t input;
     input_init(&input);
-    input_set_callback(&input, &handle_input, NULL);
+    //input_set_callback(&input, &handle_input, &words);
+    input_set_callback(&input, &handle_input, &redis);
     
     
     
+
+ 
+ 
     
     
+    
+    printf("ready\n");
     input_loop(&input);
     
     input_destroy(&input);
+    
+    /*iplus1_list_t* voice = iplus1_tree_get(&words, "voic");
+    iplus1_list_node_t* l;
+    for(l = voice->node; l; l = l->next) {
+        int* i = l->data;
+        printf("%d\n", *i);
+    }*/
+ 
+ 
+    
+    /*iplus1_tree_foreach_postorder(&words, &free_tokens, NULL);
+    iplus1_tree_destroy(&words);*/
+    redis_destroy(&redis);
+    iplus1_destroy();
     u_cleanup();
     return 0;
 }
