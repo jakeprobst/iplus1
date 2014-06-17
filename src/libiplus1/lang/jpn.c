@@ -13,8 +13,18 @@ typedef struct iplus1_japanese_t {
 
 int valid_word(char* s, const mecab_node_t* node)
 {
+    if (strlen(s) == 0) {
+        return 0;
+    }
+    if (strncmp(s, "%", 1)) { //this character makes redis break
+        return 0;
+    }
     // the documentation for these was found in a magical scroll hidden away in 
-    // a forgotten shrine
+    // a forgotten shrine (mecab/docs/posid.html)
+    if (node->posid == 13 || node->posid == 18 || // 13: 助詞,格助詞,一般,* particles
+                             node->posid == 24) {
+        return 0;                                 // 18: 助詞,接続助詞,*,* more particles
+    }                                             // 24: 助詞,連体化,*,* even more particles
     if (42 <= node->posid && node->posid <= 44) { // 42: 名詞,固有名詞,人名,一般 general names
         return 0;                                 // 43: 名詞,固有名詞,人名,姓 surname
     }                                             // 44: 名詞,固有名詞,人名,名 name
@@ -28,6 +38,7 @@ int valid_word(char* s, const mecab_node_t* node)
     return 1;                                     //  9: 記号,読点 comma
 }
 
+// TODO: this doesnt check for duplicates in output
 char** parse(char* str, void* param)
 {
     iplus1_japanese_t* jpn = (iplus1_japanese_t*)param;

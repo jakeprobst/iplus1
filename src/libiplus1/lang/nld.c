@@ -6,20 +6,20 @@
 
 #include "iplus1.h"
 #include "lang.h"
-
+#include "tree.h"
 
 typedef struct iplus1_dutch_t {
     struct sb_stemmer* stemmer;
-    
+    iplus1_tree_t* stopwords;
 } iplus1_dutch_t;
 
-int valid_word(char* s)
+int valid_word(iplus1_dutch_t* nld, char* s)
 {
-    char* punc = " -!?.";
-    
-    int i;
-    for(i = 0; punc[i] != '\0'; i++) {
-        if (s[0] == punc[i]) {
+    if (strlen(s) == 0) {
+        return 0;
+    }
+    if (nld->stopwords) {
+        if (iplus1_tree_get(nld->stopwords, s)) {
             return 0;
         }
     }
@@ -39,19 +39,18 @@ char** parse(char* tstr, void* param)
     int output_size = 1; // +1 cause null terminated
     int i;
     for(i = 0; split[i] != NULL; i++) {
-        if (valid_word(split[i])) {
+        if (valid_word(nld, split[i])) {
             output_size++;
         }
     }
     char** output = calloc(sizeof(char*), output_size);
     if (output == NULL) {
-        free(str);
-        return NULL;
+        goto error;
     }
     
     int output_index = 0;
     for(i = 0; split[i] != NULL; i++) {
-        if (!valid_word(split[i])) {
+        if (!valid_word(nld, split[i])) {
             continue;
         }
         
@@ -62,14 +61,15 @@ char** parse(char* tstr, void* param)
             for (n = 0; n < output_index; n++) {
                 free(output[n]);
             }
-            free(str);
             free(output);
-            return NULL;
+            output = NULL;
+            goto error;
         }
         strcpy(output[output_index], (char*)stemmed);
         output_index++;
     }
     
+error:
     for(i = 0; split[i] != NULL; i++) {
         free(split[i]);
     }
@@ -77,6 +77,32 @@ char** parse(char* tstr, void* param)
     free(str);
     
     return output;
+}
+
+void load_stopwords(iplus1_dutch_t* nld)
+{
+    nld->stopwords = NULL;
+    FILE* stopfile = fopen("data/nld-stopwords.txt", "r");
+    if (stopfile) {
+        nld->stopwords = malloc(sizeof(iplus1_tree_t));
+        iplus1_tree_init(nld->stopwords, &iplus1_tree_compare_str);
+        
+        int ch;
+        int w = 0;
+        char word[64]; // surely no words over 64 characters...right?
+        while((ch = fgetc(stopfile)) != EOF) {
+            if (ch == '\n') {
+                word[w] = '\0';
+                char* s = strdup(word);
+                iplus1_tree_insert(nld->stopwords, s, s);
+                w = 0;
+            }
+            else {
+                word[w] = ch;
+                w++;
+            }
+        }
+    }
 }
 
 int init(iplus1_lang_t* lang)
@@ -94,12 +120,17 @@ int init(iplus1_lang_t* lang)
         return IPLUS1_FAIL;
     }
     
+    load_stopwords(nld);
     return IPLUS1_SUCCESS;
 }
 
 int destroy(iplus1_lang_t* lang)
 {
     iplus1_dutch_t* nld = (iplus1_dutch_t*)lang->param;
+    
+    iplus1_tree_foreach_postorder(nld->stopwords, &iplus1_tree_free_key, NULL);
+    iplus1_tree_destroy(nld->stopwords);
+    free(nld->stopwords);
     
     sb_stemmer_delete(nld->stemmer);
     free(lang->full_lang);
