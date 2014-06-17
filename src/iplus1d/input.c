@@ -17,8 +17,8 @@
 
 // this can probably be smaller, I think the sentence spec says 
 // a single sentence can be at most 512 chars...
-//#define BUFFER_SIZE 1024*4
-#define BUFFER_SIZE 1024
+// there is this one russian sentence that is like 1000 characters so...
+#define BUFFER_SIZE 1024*2
 
 
 void printbuf(char* buf, int size)
@@ -31,7 +31,7 @@ void printbuf(char* buf, int size)
                 printf("   ");
             }
             else {
-                printf("%.2X ", buf[(l*16 + i)]);
+                printf("%.2X ", buf[(l*16 + i)] & 0xFF);
             }
         }
         printf("|");
@@ -115,6 +115,7 @@ int make_bind_socket()
 
 int input_init(input_t* input)
 {
+    input->running = 1;
     input->listen_fd = make_bind_socket();
     if (input->listen_fd == -1) {
         fprintf(stderr, "input_init: couldn't init socket\n");
@@ -200,31 +201,55 @@ int parse_line(char* in_line, command_t* cmd)
     char* line = strdup(in_line);
     char* pos;
     char* s = strtok_r(line, "\t", &pos);
-    
+
     if (s == NULL) {
         goto error;
     }
-    if (strcmp(s, "SEN") == 0) {
+    if (strncmp(s, "SEN", 3) == 0) {
         cmd->type = CMD_SENTENCE;
         cmd->sen.sen = NULL;
         
-        s = strtok_r(NULL, "\t", &pos);
-        if (s == NULL) {
+        if ((s = strtok_r(NULL, "\t", &pos)) == NULL) {
             goto error;
         }
         cmd->sen.id = atoi(s);
         
-        s = strtok_r(NULL, "\t", &pos);
-        if (s == NULL) {
+        if ((s = strtok_r(NULL, "\t", &pos)) == NULL) {
             goto error;
         }
         strncpy(cmd->sen.lang, s, 4);
         
-        s = strtok_r(NULL, "\t", &pos);
-        if (s == NULL) {
+        if ((s = strtok_r(NULL, "\t", &pos)) == NULL) {
             goto error;
         }
         cmd->sen.sen = strdup(s);
+    }
+    if (strncmp(s, "LINK", 4) == 0) {
+        cmd->type = CMD_LINK;
+        
+        if ((s = strtok_r(NULL, "\t", &pos)) == NULL) {
+            goto error;
+        }
+        strncpy(cmd->link.lang, s, 4);
+        
+        if ((s = strtok_r(NULL, "\t", &pos)) == NULL) {
+            goto error;
+        }
+        cmd->link.id = atoi(s);
+        
+        if ((s = strtok_r(NULL, "\t", &pos)) == NULL) {
+            goto error;
+        }
+        strncpy(cmd->link.tlang, s, 4);
+        
+        if ((s = strtok_r(NULL, "\t", &pos)) == NULL) {
+            goto error;
+        }
+        cmd->link.tid = atoi(s);
+    }
+    
+    else if (strncmp(s, "QUIT", 4) == 0) {
+        cmd->type = CMD_QUIT;
     }
     
     free(line);
@@ -243,31 +268,28 @@ int input_parse_data(input_t* input, int fd)
     
     int size = 0;
     for(;;) {
-        memset(buf, 0xFF, BUFFER_SIZE);
+        memset(buf, 0, BUFFER_SIZE);
         size = recv(fd, buf, BUFFER_SIZE, MSG_PEEK);
-        if (size <= 0) {
+        if (size < 0) {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                continue;
+            }
             close(fd);
             return 0;
         }
         
-        printbuf(buf, size-1);
-        int i, ok = 0;
-        for(i = 0; i < size; i++) {
-            if (buf[i] == '\0') {
-                ok = 1;
-            }
-        }
-        if (!ok) {
-            fprintf(stderr, "malformed input, not NIL terminated\n");
-            return -1;
-        }
-        
+        //printbuf(buf, size-1);
+
         int z = parse_line(buf, &cmd);
         if (z == -1) {
             fprintf(stderr, "invalid data: '%s'\n", buf);
             z = strlen(buf) + 1;
         }
         else {
+            if (cmd.type == CMD_QUIT) {
+                input->running = 0;
+                return 1;
+            }
             cmd.fd = fd;
             input->callback(&cmd, input->callback_param);
         }
@@ -289,7 +311,7 @@ int input_loop(input_t* input)
     struct epoll_event events[MAX_EVENTS];
     
     int i, n;
-    for(;;) {
+    while(input->running) {
         n = epoll_wait(input->epoll_fd, events, MAX_EVENTS, -1);
         for(i = 0; i < n; i++) {
             if (events[i].events & (EPOLLERR | EPOLLHUP)) {

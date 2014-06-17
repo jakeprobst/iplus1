@@ -4,6 +4,7 @@
 typedef enum command_type_t  {
     CMD_SENTENCE,
     CMD_LINK,
+    CMD_QUIT,
 } command_type_t;
 
 
@@ -19,6 +20,8 @@ typedef struct command_t {
         struct {
             int id;
             int tid;
+            char lang[4];
+            char tlang[4];
         } link;
     };
     
@@ -31,6 +34,7 @@ typedef struct command_t {
 
 
 typedef struct input_t {
+    int running;
     int epoll_fd;
     int listen_fd;
     
