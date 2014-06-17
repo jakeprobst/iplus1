@@ -10,6 +10,7 @@ def main():
         os.system("wget http://tatoeba.org/files/downloads/links.csv")
 
     sentences = {}
+    links = {}
     #ghost = {}
     
     senfile = open("sentences.csv")
@@ -24,8 +25,9 @@ def main():
             pass # some asshole entered an empty sentence
         sentences[id] = line
 
-
-    linkfile = open("links.csv")
+    
+    linkfile = open("links.csv", "r")
+    fixedlinks = open("data/links.csv", "w")
     while True:
         line = linkfile.readline()
         if line == '':
@@ -48,16 +50,15 @@ def main():
         except KeyError:
             #ghost[main_sentence] = 0
             continue
-
-    #l = []
-    #for k in ghost:
-    #    l.append(k)
-    #l.sort()
-    #for i in l:
-    #    print i
+        
+        main_lang = sentences[main_sentence].split('\t')[1]
+        fixedlinks.write("%s\t%s\t%s\t%s\n" % (main_lang, main_sentence, tr_lang, translated_sentence))
+        
+        
 
     outfiles = {}
 
+    trans = total = 0
     try:
         os.mkdir("data/")
     except: pass
@@ -65,7 +66,6 @@ def main():
         lang = sentences[k].split('\t')[1]
         if not outfiles.has_key(lang):
             outfiles[lang] = file("data/" + lang + ".csv", "w")
-        outfiles[lang].write(sentences[k]+'\n')
 
 
 
