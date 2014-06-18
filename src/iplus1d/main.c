@@ -52,6 +52,7 @@ int handle_sentence(command_t* cmd, redis_t* redis)
         printf("error: %s\n", redis->reply->str);
     }
     
+    
     if (token) {
         for(i = 0; token[i] != NULL; i++) {
             free(token[i]);
@@ -62,6 +63,7 @@ int handle_sentence(command_t* cmd, redis_t* redis)
     return 0;
 }
 
+
 int handle_link(command_t* cmd, redis_t* redis)
 {
     
@@ -70,13 +72,27 @@ int handle_link(command_t* cmd, redis_t* redis)
         return -1;
     }
     
-    char table[32];
-    snprintf(table, 32, "%s-%s", cmd->link.lang, cmd->link.tlang);
-    
-    redis_command(redis, "HSET %s %d %d", table, cmd->link.id, cmd->link.tid);
-    printf("HSET %s %d %d\n", table, cmd->link.id, cmd->link.tid);
-    if (redis->reply->type == REDIS_REPLY_ERROR) {
-        printf("error: %s\n", redis->reply->str);
+    // redis can optimize sets if the value is a 64 bit integer
+    // so here I merge two 32 bit ints into a single 64 bit int
+    // cause really, tatoeba isnt gonna have 4294967295 sentences anytime soon
+    // the & 0xFFFFFFFF is the one specified on the left, >> 32 is on right
+    // ie. "eng-jpn" will be `eng = id & 0xFFFFFFFF; jpn = id >> 32;`
+    int64_t merged = 0;
+    if (strcmp(cmd->link.lang, cmd->link.tlang) < 0) { // lang sorts before tlang
+        merged = (cmd->link.id) | (cmd->link.tid << 32);
+        redis_command(redis, "SADD %s-%s %ld", cmd->link.lang, cmd->link.tlang, merged);
+        if (redis->reply->type == REDIS_REPLY_ERROR) {
+            printf("error: %s\n", redis->reply->str);
+        }
+        printf("SSET %s-%s %ld\n", cmd->link.lang, cmd->link.tlang, merged);
+    }
+    else {
+        merged = (cmd->link.tid) | (cmd->link.id << 32);
+        redis_command(redis, "SADD %s-%s %ld", cmd->link.tlang, cmd->link.lang, merged);
+        if (redis->reply->type == REDIS_REPLY_ERROR) {
+            printf("error: %s\n", redis->reply->str);
+        }
+        printf("SSET %s-%s %ld\n", cmd->link.tlang, cmd->link.lang, merged);
     }
     
     return 0;
