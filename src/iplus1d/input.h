@@ -18,8 +18,8 @@ typedef struct command_t {
             char* sen;
         } sen;
         struct {
-            int id;
-            int tid;
+            int64_t id;
+            int64_t tid;
             char lang[4];
             char tlang[4];
         } link;
