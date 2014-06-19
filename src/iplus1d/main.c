@@ -136,39 +136,19 @@ int main(int argc, char** argv)
         fprintf(stderr, "could not init redis\n");
         return -1;
     }
-    
-    /*iplus1_tree_t words;
-    iplus1_tree_init(&words, &iplus1_tree_compare_str);*/
-    
+        
     input_t input;
     input_init(&input);
-    //input_set_callback(&input, &handle_input, &words);
     input_set_callback(&input, &handle_input, &redis);
     
     
     
 
- 
- 
-    
-    
     
     printf("ready\n");
     input_loop(&input);
     
     input_destroy(&input);
-    
-    /*iplus1_list_t* voice = iplus1_tree_get(&words, "voic");
-    iplus1_list_node_t* l;
-    for(l = voice->node; l; l = l->next) {
-        int* i = l->data;
-        printf("%d\n", *i);
-    }*/
- 
- 
-    
-    /*iplus1_tree_foreach_postorder(&words, &free_tokens, NULL);
-    iplus1_tree_destroy(&words);*/
     redis_destroy(&redis);
     iplus1_destroy();
     u_cleanup();
