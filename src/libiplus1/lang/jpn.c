@@ -16,7 +16,7 @@ int valid_word(char* s, const mecab_node_t* node)
     if (strlen(s) == 0) {
         return 0;
     }
-    if (strncmp(s, "%", 1)) { //this character makes redis break
+    if (strncmp(s, "%", 1) == 0) { //this character makes redis break
         return 0;
     }
     // the documentation for these was found in a magical scroll hidden away in 
