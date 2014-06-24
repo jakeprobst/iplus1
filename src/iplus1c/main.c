@@ -8,7 +8,7 @@
 #include <netdb.h>
 
 #include "iplus1.h"
-
+#include "anki.h"
 
 #define PORT "51945"
 
@@ -16,9 +16,9 @@ void usage(char* name)
 {
     printf("usage:\n");
     printf("initialize:\n");
-    printf("\t%s init\n", name);
+    printf("\t%s init <dbfile>\n", name);
     printf("send deck to iplus1d:\n");
-    printf("\t%s native-lang target-lang anki-deck\n", name);
+    printf("\t%s <native-lang> <target-lang> <anki-deck>\n", name);
 }
 
 char* readline(FILE* fd)
@@ -76,9 +76,13 @@ int connect_to_server()
 }
 
 
-int initialize_redis(int fd)
+int initialize_redis(int fd, char* path)
 {
-    FILE* sentences = fopen("sentences.csv", "r");
+    FILE* sentences = fopen(path, "r");
+    if (sentences == NULL) {
+        fprintf(stderr, "could not open %s\n", path);
+        return -1;
+    }
     char buf[2048];
     char* line;
     while((line = readline(sentences)) != NULL) {
@@ -98,8 +102,38 @@ int initialize_redis(int fd)
     return 0;
 }
 
+int send_anki_deck_foreach(char* card, void* param)
+{
+    int* fd = param;
+    char* pos;
+    char* front = strtok_r(card, "\x1f", &pos);
+    
+    char buf[strlen(front) + 16]; // 16 arbitrary, could be lower
+    
+    int l = sprintf(buf, "ANKICARD\t%s", front) + 1;
+    printf("%s\n", buf);
+    send(*fd, buf, l, 0);
+    
+    
+    
+    return 0;
+}
+
+
 int send_anki_deck(int fd, char* native_lang, char* target_lang, char* anki_path)
 {
+    anki_t anki_deck;
+    
+    char buf[1024];
+    int l = snprintf(buf, 1024, "ANKIBEGIN\t%s\t%s", native_lang, target_lang) + 1;
+    send(fd, buf, l, 0);
+    
+    anki_init(&anki_deck, anki_path);
+    anki_foreach(&anki_deck, &send_anki_deck_foreach, &fd);
+    anki_destroy(&anki_deck);
+    
+    l = snprintf(buf, 1024, "ANKIEND") + 1;
+    send(fd, buf, l, 0);
     
     return 0;
 }
@@ -111,7 +145,7 @@ int get_new_sentences(int fd)
 
 int main(int argc, char** argv)
 {
-    if (argc == 1) {
+    if (argc == 1 || argc == 2) {
         usage(argv[0]);
         return 0;
     }
@@ -122,9 +156,9 @@ int main(int argc, char** argv)
         return -1;
     }
     
-    if (argc == 2) {
+    if (argc == 3) {
         if (strcmp(argv[1], "init") == 0) {
-            initialize_redis(fd);
+            initialize_redis(fd, argv[2]);
         }
         else {
             usage(argv[0]);
@@ -140,6 +174,17 @@ int main(int argc, char** argv)
         get_new_sentences(fd);
     }
     
+    char buf[1024];
+    while (1) {
+        int r = recv(fd, buf, 1024, MSG_PEEK);
+        if (r == 0) {
+            return -1;
+        }
+        printf("%s\n", buf);
+        
+        recv(fd, buf, strlen(buf)+1, 0);
+    }
+
 
 
     
