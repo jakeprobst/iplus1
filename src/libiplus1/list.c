@@ -32,6 +32,19 @@ int iplus1_list_append(iplus1_list_t* list, void* data)
     return IPLUS1_SUCCESS;
 }
 
+int iplus1_list_remove(iplus1_list_t* list, iplus1_list_node_t* node)
+{
+    iplus1_list_node_t* index;
+    for(index = list->node; index != NULL; index = index->next) {
+        if (index->next == node) {
+            index->next = node->next;
+            free(node);
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int iplus1_list_foreach(iplus1_list_t* list, int (*func)(void*, void*), void* param)
 {
     iplus1_list_node_t* node;
