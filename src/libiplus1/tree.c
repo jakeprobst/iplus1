@@ -128,9 +128,26 @@ int iplus1_tree_insert(iplus1_tree_t* tree, void* key, void* value)
     return IPLUS1_SUCCESS;
 }
 
+iplus1_tree_node_t* _tree_get(iplus1_tree_node_t* node, void* key, int (*compare)(void*, void*))
+{
+    if (node == NULL) {
+        return NULL;
+    }
+    int comp = compare(node->key, key);
+    if (comp > 0) {
+        return _tree_get(node->left, key, compare);
+    }
+    if (comp < 0) {
+        return _tree_get(node->right, key, compare);
+    }
+    else {
+        return node;
+    }
+}
+
 void* iplus1_tree_get(iplus1_tree_t* tree, void* key)
 {
-    iplus1_tree_node_t* cursor = tree->root;
+    /*iplus1_tree_node_t* cursor = tree->root;
     for(;;) {
         if (cursor == NULL) {
             return NULL;
@@ -145,8 +162,106 @@ void* iplus1_tree_get(iplus1_tree_t* tree, void* key)
             return cursor->value;
         }
     }
+    return NULL;*/
+    
+    iplus1_tree_node_t* node = _tree_get(tree->root, key, tree->compare);
+    if (node) {
+        return node->value;
+    }
     return NULL;
 }
+
+iplus1_tree_node_t* _min_value_node(iplus1_tree_node_t* root)
+{
+    iplus1_tree_node_t* node;
+    while(node->left != NULL) {
+        node = node->left;
+    }
+    return node;
+}
+
+iplus1_tree_node_t* _tree_delete(iplus1_tree_node_t* root, iplus1_tree_node_t* node, int (*compare)(void*, void*))
+{
+    if (root == NULL || node == NULL) {
+        return NULL;
+    }
+    
+    int comp = compare(root->key, node->key);
+    if (comp > 0) {
+        root->left = _tree_delete(root->left, node, compare);
+    }
+    else if (comp < 0) {
+        root->right = _tree_delete(root->right, node, compare);
+    }
+    else {
+        if (root->left == NULL && root->right == NULL) {
+            free(root);
+            return NULL;
+        }
+        else if (root->left == NULL || root->right == NULL) {
+            if (root->left != NULL) {
+                *root = *root->left;
+                free(root->left);
+            }
+            else if (root->right != NULL) {
+                *root = *root->right;
+                free(root->right);
+            }
+        }
+        else {
+            iplus1_tree_node_t* temp = _min_value_node(root->right);
+            
+            root->key = temp->key;
+            root->value = temp->value;
+            
+            root->right = _tree_delete(root->right, node, compare);
+        }
+    }
+    
+    if (root == NULL) {
+        return NULL;
+    }
+    
+    root->height = _max(_height(root->right), _height(root->left)) + 1;
+    int balance = _balance(root);
+    
+    if (balance > 1 && _balance(root->left) >= 0) { // root > node
+        return _rotate_right(root);
+    }
+    if (balance > 1 && _balance(root->left) < 0) { // root < node
+        root->left = _rotate_left(root->left);
+        return _rotate_right(root);
+    }
+    if (balance < -1 && _balance(root->right) <= 0) { // root < node
+        return _rotate_left(root);
+    }
+    if (balance < -1 && _balance(root->right) > 0) { // root < node
+        root->right = _rotate_right(root->right);
+        return _rotate_left(root);
+    }
+    
+    return root;
+}
+
+
+int iplus1_tree_remove(iplus1_tree_t* tree, void* key, int (*func)(void*, void*, void*))
+{
+    iplus1_tree_node_t* node = _tree_get(tree->root, key, tree->compare);
+    if (node == NULL) {
+        return -1;
+    }
+    void* k = node->key;
+    void* v = node->value;
+    
+    tree->root = _tree_delete(tree->root, node, tree->compare);
+    if (func) {
+        func(k, v, NULL);
+    }
+    //free(node);
+    
+    return 0;
+}
+
 
 int _iplus1_tree_node_foreach_inorder(iplus1_tree_node_t* node, int (*func)(void*, void*, void*), void* param)
 {

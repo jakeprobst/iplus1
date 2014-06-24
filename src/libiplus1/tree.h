@@ -29,13 +29,12 @@ typedef struct iplus1_tree_t {
 int iplus1_tree_init(iplus1_tree_t*, int (*compare)(void*, void*));
 int iplus1_tree_destroy(iplus1_tree_t*);
 
-
 int iplus1_tree_insert(iplus1_tree_t*, void*, void*);
+int iplus1_tree_remove(iplus1_tree_t*, void*, int (*func)(void*, void*, void*));
 void* iplus1_tree_get(iplus1_tree_t*, void*);
 
 int iplus1_tree_foreach_inorder(iplus1_tree_t*, int (*func)(void*, void*, void*), void*);
 int iplus1_tree_foreach_postorder(iplus1_tree_t*, int (*func)(void*, void*, void*), void*);
-
 
 int iplus1_tree_compare_int(void*, void*);
 int iplus1_tree_compare_str(void*, void*);
