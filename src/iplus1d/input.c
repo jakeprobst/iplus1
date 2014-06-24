@@ -264,6 +264,8 @@ int parse_line(char* in_line, command_t* cmd)
         strncpy(cmd->ankibegin.tlang, s, 4);
     }
     else if (strncmp(s, "ANKICARD", 8) == 0) {
+        cmd->type = CMD_ANKICARD;
+        
         if ((s = strtok_r(NULL, "\t", &pos)) == NULL) {
             goto error;
         }
