@@ -157,6 +157,9 @@ int command_destroy(command_t* cmd)
     if (cmd->type == CMD_SENTENCE) {
         free(cmd->sen.sen);
     }
+    if (cmd->type == CMD_ANKICARD) {
+        free(cmd->anki.text);
+    }
     
     return 0;
 }
@@ -224,7 +227,7 @@ int parse_line(char* in_line, command_t* cmd)
         }
         cmd->sen.sen = strdup(s);
     }
-    if (strncmp(s, "LINK", 4) == 0) {
+    else if (strncmp(s, "LINK", 4) == 0) {
         cmd->type = CMD_LINK;
         
         if ((s = strtok_r(NULL, "\t", &pos)) == NULL) {
@@ -247,7 +250,28 @@ int parse_line(char* in_line, command_t* cmd)
         }
         cmd->link.tid = atoi(s);
     }
-    
+    else if (strncmp(s, "ANKIBEGIN", 9) == 0) {
+        cmd->type = CMD_ANKIBEGIN;
+        
+        if ((s = strtok_r(NULL, "\t", &pos)) == NULL) {
+            goto error;
+        }
+        strncpy(cmd->ankibegin.nlang, s, 4);
+
+        if ((s = strtok_r(NULL, "\t", &pos)) == NULL) {
+            goto error;
+        }
+        strncpy(cmd->ankibegin.tlang, s, 4);
+    }
+    else if (strncmp(s, "ANKICARD", 8) == 0) {
+        if ((s = strtok_r(NULL, "\t", &pos)) == NULL) {
+            goto error;
+        }
+        cmd->anki.text = strdup(s);
+    }
+    else if (strncmp(s, "ANKIEND", 7) == 0) {
+        cmd->type = CMD_ANKIEND;
+    }
     else if (strncmp(s, "QUIT", 4) == 0) {
         cmd->type = CMD_QUIT;
     }
@@ -270,16 +294,15 @@ int input_parse_data(input_t* input, int fd)
     for(;;) {
         memset(buf, 0, BUFFER_SIZE);
         size = recv(fd, buf, BUFFER_SIZE, MSG_PEEK);
-        if (size < 0) {
+        if (size <= 0) {
             if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                errno = 0;
                 continue;
             }
             close(fd);
             return 0;
         }
         
-        //printbuf(buf, size-1);
-
         int z = parse_line(buf, &cmd);
         if (z == -1) {
             fprintf(stderr, "invalid data: '%s'\n", buf);

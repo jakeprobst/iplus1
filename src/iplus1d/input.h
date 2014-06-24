@@ -4,6 +4,9 @@
 typedef enum command_type_t  {
     CMD_SENTENCE,
     CMD_LINK,
+    CMD_ANKIBEGIN,
+    CMD_ANKICARD,
+    CMD_ANKIEND,
     CMD_QUIT,
 } command_type_t;
 
@@ -23,6 +26,13 @@ typedef struct command_t {
             char lang[4];
             char tlang[4];
         } link;
+        struct {
+            char nlang[4];
+            char tlang[4];
+        } ankibegin;
+        struct {
+            char* text;
+        } anki;
     };
     
 } command_t;
