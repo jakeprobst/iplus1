@@ -103,6 +103,7 @@ void load_stopwords(iplus1_finnish_t* fin)
             }
         }
     }
+    fclose(stopfile);
 }
 
 int init(iplus1_lang_t* lang)

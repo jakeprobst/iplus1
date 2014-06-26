@@ -103,6 +103,7 @@ void load_stopwords(iplus1_russian_t* rus)
             }
         }
     }
+    fclose(stopfile);
 }
 
 int init(iplus1_lang_t* lang)

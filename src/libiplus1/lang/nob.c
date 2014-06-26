@@ -107,6 +107,7 @@ void load_stopwords(iplus1_norwegian_t* nob)
             }
         }
     }
+    fclose(stopfile);
 }
 
 int init(iplus1_lang_t* lang)

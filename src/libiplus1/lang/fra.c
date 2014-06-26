@@ -103,6 +103,7 @@ void load_stopwords(iplus1_french_t* fra)
             }
         }
     }
+    fclose(stopfile);
 }
 
 int init(iplus1_lang_t* lang)
