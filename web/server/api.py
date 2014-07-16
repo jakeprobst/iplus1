@@ -1,4 +1,4 @@
-from .iplus1 import IPlus1Manager
+from .managers import IPlus1Manager
 from tastypie.authorization import DjangoAuthorization
 from tastypie.resources import Resource
 from tastypie import fields
@@ -34,11 +34,11 @@ class IPlus1Resource(Resource):
         iplus1 = IPlus1Manager()
         iplus1_sentences = iplus1.get_iplus1(deck, native_lang, target_lang)
         
-        bundle.obj = IPlus1Object('','','', iplus1_sentences)
+        bundle.obj = IPlus1Object(native_lang, target_lang, '', iplus1_sentences)
         return bundle
 
 
-    # I have no idea what this is supposed to do
-    # I just put in filler till it stopped complaining about me
+    # provides arguments to obj_get, we don't need this at all but
+    # it has to be implemented or tastypie will bark at us.
     def detail_uri_kwargs(self, bundle):
-        return [['', '']]
+        return {'', ''} # this should do I think
