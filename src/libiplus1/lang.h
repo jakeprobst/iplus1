@@ -24,6 +24,8 @@ int iplus1_lang_init(iplus1_lang_t*, char* path);
 int iplus1_lang_destroy(iplus1_lang_t*);
 
 char** iplus1_lang_parse(iplus1_lang_t*, char*);
+void iplus1_lang_parse_free(char**);
+
 
 // convenience functions for language plugins
 // most will probably want to use these

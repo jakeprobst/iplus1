@@ -50,6 +50,17 @@ char** iplus1_lang_parse(iplus1_lang_t* lang, char* str)
     return lang->parse(str, lang->param);
 }
 
+void iplus1_lang_parse_free(char** tokens)
+{
+    int i;
+    for(i = 0; tokens[i] != NULL; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+
+
 char* iplus1_lang_lowercase(char* str)
 {
     int len;
