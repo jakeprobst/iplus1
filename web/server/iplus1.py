@@ -1,14 +1,14 @@
-from pytoeba.models import Sentence, Log
-from random import random
 import redis
 import pyplus1
 
 REDIS_SERVER = 'localhost'
 REDIS_PORT = 6379
 MAX_RESULTS = 100
+# connection pooling for redis
+POOL = redis.ConnectionPool(host=REDIS_SERVER, port=REDIS_PORT)
 
-
-class Result:
+# pytoeba is still on python2, gotta inherit from object
+class Result(object):
     def __init__(self, nid, tid, word):
         self.nid = nid
         self.tid = tid
@@ -17,7 +17,7 @@ class Result:
     def __repr__(self):
         return "Result(%d %d %s)" % (self.nid, self.tid, self.word)
 
-class User:
+class User(object):
     def __init__(self, nlang, tlang):
         self.words = set()
         self.nlang = nlang
@@ -40,9 +40,9 @@ class User:
             for w in words:
                 self.add_word(w)
             
-class IPlus1Database:
+class IPlus1Database(object):
     def __init__(self):
-        self.redisdb = redis.Redis(REDIS_SERVER, REDIS_PORT)
+        self.redisdb = redis.Redis(connection_pool=POOL)
 
     def add_sentence(self, lang, id, sentence):
         words = pyplus1.lang_parse(lang, sentence.encode('utf-8'))
@@ -95,61 +95,6 @@ class IPlus1Database:
                 results.append(Result(nid, tid, outwords[0]))
 
         return results
-
-class IPlus1Manager(object):
-    iplus1db = IPlus1Database()
-
-    def last_updated(self):
-        pass
-        #self.command = 'LASTUPDATE'
-        #response = self.send()
-        #return convert_to_datetime_object(response)
-
-    def prepare_updates(self, date=None):
-        if not date:
-            date = self.last_updated()
-
-        logs = list(Log.objects.filter(added_on__gte=date))
-
-        for log in logs:
-            if log.type in ['sad', 'sed']:
-                self.iplus1db.add_sentence(log.langs, log.source_id, log.change_set)
-            if log.type == 'lad':
-                langs = log.langs.split()
-                self.iplus1db.add_link(langs[0], logs.source_id, langs[1], logs.target_id)
-            if log.type == 'srd':
-                # this isn't in the protocol too
-                self.iplus1db.remove_sentence(log.langs, log.source_id)
-            if log.type == 'lrd':
-                # uh this too? updates is officially broken
-                langs = log.langs.split()
-                self.iplus1db.remove_link(langs[0], logs.source_id, langs[1], logs.target_id)
-
-        # need to set the LASTUPDATE thing here
-    
-            
-    def prepare_anki_deck(self, deck, nlang, tlang):
-        user = User(nlang, tlang)
-        user.parse_text(deck)
-        
-        return self.iplus1db.parse_user(user)
-
-    def get_iplus1(self, deck, lang1, lang2):
-        results = self.prepare_anki_deck(deck, lang1, lang2)
-        nid = []
-        tid = []
-        for r in results:
-            nid.append(r.nid)
-            tid.append(r.tid)
-        
-        nsen = list(Sentence.objects.filter(id__in=nid))
-        tsen = list(Sentence.objects.filter(id__in=tid))
-        
-        out = []
-        for i in xrange(len(tsen)):
-            out.append([nsen[i], tsen[i]])
-        
-        return out
         
         
         
