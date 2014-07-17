@@ -21,8 +21,8 @@ ffi.cdef("""
 
 # TODO: figure where exactly these headers will be going
 iplus1 = ffi.verify("""
-#include "libiplus1/iplus1.h"
-#include "libiplus1/lang.h"
+#include "iplus1/iplus1.h"
+#include "iplus1/lang.h"
 """, libraries=["iplus1"],
      library_dirs=[""])
 
@@ -46,3 +46,4 @@ def lang_parse(langcode, sent):
     iplus1.iplus1_lang_parse_free(words)
 
     return word_list
+
