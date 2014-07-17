@@ -1,5 +1,5 @@
 CXX = gcc
-PREFIX=/usr/local/
+PREFIX=/usr/local
 
 
 LIB_VERSION = 1.0.0
@@ -12,7 +12,7 @@ build:
 
 # libiplus1
 
-LIB_CFLAGS = -fPIC -ggdb -Wall -Werror `pkg-config --cflags icu-uc`
+LIB_CFLAGS = -fPIC -ggdb -Wall -Werror `pkg-config --cflags icu-uc` -DPREFIX=\"$(PREFIX)\"
 LIB_LDFLAGS = -fPIC -ldl `pkg-config --libs icu-uc`
 
 LIB_SRC = $(wildcard src/libiplus1/*.c)
@@ -33,7 +33,7 @@ libiplus1.so: build/libiplus1 $(LIB_OBJ)
 
 # language plugins
 
-LANG_CFLAGS = -fPIC -ggdb -Wall -Werror -Isrc/libiplus1 `pkg-config --cflags icu-uc`
+LANG_CFLAGS = -fPIC -ggdb -Wall -Werror -Isrc/libiplus1 `pkg-config --cflags icu-uc` -DPREFIX=\"$(PREFIX)\"
 LANG_LDFLAGS = -fPIC -L. -liplus1 -lstemmer `pkg-config --libs icu-uc` -lmecab
 
 LANG_SRC = $(wildcard src/libiplus1/lang/*.c)
@@ -84,6 +84,17 @@ build/iplus1c/%.o: src/iplus1c/%.c
 
 iplus1c: build/iplus1c $(C_OBJ) 
 	$(CXX) -o $@ $(C_OBJ) $(C_LDFLAGS)
+
+install:
+	mkdir -p $(PREFIX)/include/iplus1
+	mkdir -p $(PREFIX)/share/iplus1
+	mkdir -p $(PREFIX)/share/iplus1/lang
+	mkdir -p $(PREFIX)/share/iplus1/data
+	install src/libiplus1/iplus1.h src/libiplus1/lang.h -m 644 -t $(PREFIX)/include/iplus1
+	install libiplus1.so* -m 755 -t $(PREFIX)/lib
+	install lang/* -m 755 -t $(PREFIX)/share/iplus1/lang
+	install data/* -m 644 -t $(PREFIX)/share/iplus1/data
+
 
 clean:
 	rm -r build lang

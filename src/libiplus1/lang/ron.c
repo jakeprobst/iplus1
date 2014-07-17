@@ -82,7 +82,7 @@ error:
 void load_stopwords(iplus1_romanian_t* ron)
 {
     ron->stopwords = NULL;
-    FILE* stopfile = fopen("data/ron-stopwords.txt", "r");
+    FILE* stopfile = fopen(PREFIX "/share/iplus1/data/ron-stopwords.txt", "r");
     if (stopfile) {
         ron->stopwords = malloc(sizeof(iplus1_tree_t));
         iplus1_tree_init(ron->stopwords, &iplus1_tree_compare_str);

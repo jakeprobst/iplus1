@@ -86,7 +86,7 @@ error:
 void load_stopwords(iplus1_norwegian_t* nob)
 {
     nob->stopwords = NULL;
-    FILE* stopfile = fopen("data/nob-stopwords.txt", "r");
+    FILE* stopfile = fopen(PREFIX "/share/iplus1/data/nob-stopwords.txt", "r");
     if (stopfile) {
         nob->stopwords = malloc(sizeof(iplus1_tree_t));
         iplus1_tree_init(nob->stopwords, &iplus1_tree_compare_str);

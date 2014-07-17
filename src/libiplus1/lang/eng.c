@@ -82,7 +82,7 @@ error:
 void load_stopwords(iplus1_english_t* eng)
 {
     eng->stopwords = NULL;
-    FILE* stopfile = fopen("data/eng-stopwords.txt", "r");
+    FILE* stopfile = fopen(PREFIX "/share/iplus1/data/eng-stopwords.txt", "r");
     if (stopfile) {
         eng->stopwords = malloc(sizeof(iplus1_tree_t));
         iplus1_tree_init(eng->stopwords, &iplus1_tree_compare_str);

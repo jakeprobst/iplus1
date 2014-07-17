@@ -17,8 +17,8 @@ int _iplus1_load_languages()
     int count = 1; // language list is null terminated, so start with one
     
     DIR* dir;
-    if ((dir = opendir("./lang")) == NULL) {
-        fprintf(stderr, "language directory not found\n");
+    if ((dir = opendir(PREFIX "/share/iplus1/lang")) == NULL) {
+        fprintf(stderr, "language directory not found '%s'\n", PREFIX "/share/lang");
         return IPLUS1_FAIL;
     }
     
@@ -40,7 +40,7 @@ int _iplus1_load_languages()
     while ((dp = readdir(dir)) != NULL) {
         if (strncmp(dp->d_name+strlen(dp->d_name)-3 , ".so", 3) == 0) {
             char path[FILENAME_MAX];
-            snprintf(path, FILENAME_MAX, "%s%s", "lang/", dp->d_name);
+            snprintf(path, FILENAME_MAX, PREFIX "%s%s", "/share/iplus1/lang/", dp->d_name);
             
             languages[lindex] = malloc(sizeof(iplus1_lang_t));
             if (languages[lindex] == NULL) {
