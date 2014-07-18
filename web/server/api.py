@@ -14,7 +14,7 @@ class IPlus1Object(object):
 class IPlus1Resource(Resource):
     native_lang = fields.CharField(attribute='native_lang')
     target_lang = fields.CharField(attribute='target_lang')
-    deck = fields.CharField(attribute='deck')
+    deck = fields.ListField(attribute='deck')
     iplus1_sentences = fields.ListField(attribute='iplus1_sentences')
 
     class Meta:
@@ -41,4 +41,4 @@ class IPlus1Resource(Resource):
     # provides arguments to obj_get, we don't need this at all but
     # it has to be implemented or tastypie will bark at us.
     def detail_uri_kwargs(self, bundle):
-        return {'', ''} # this should do I think
+        return [['', '']] # this should do I think
