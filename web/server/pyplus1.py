@@ -33,7 +33,7 @@ def lang_parse(langcode, sent):
     words = iplus1.iplus1_lang_parse(lang, sent)
 
     word_list = []
-    i = 0        
+    i = 0
     while words[i] != ffi.NULL:
         w = ''
         n = 0
