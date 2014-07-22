@@ -35,8 +35,8 @@ class User(object):
         return word in self.words
 
     def parse_text(self, text):
-        for line in text.split('\n'):
-            words = pyplus1.lang_parse(self.tlang, line.encode('utf-8'))
+        for line in text:
+            words = pyplus1.lang_parse(self.tlang.encode('utf-8'), line.encode('utf-8'))
             for w in words:
                 self.add_word(w)
             
