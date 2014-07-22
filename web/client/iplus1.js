@@ -1,48 +1,45 @@
-var worker = new Worker("./worker.sql.js");
+var iplus1 = new Worker("./worker.iplus1.js");
+
 
 var ankifile = document.getElementById("ankifile");
 var submit = document.getElementById("submit");
 var content = document.getElementById("content");
+var nlang = document.getElementById("nativelang");
+var tlang = document.getElementById("targetlang");
 
-function clean_string(instr)
+
+function iplus1_start()
 {
-    var s = instr.split("\x1f")[0];
-    var out = s.replace(/{{.*?::(.*?)}}/g, "$1");
-    console.log(out);
-    return out;
+    iplus1.postMessage({action: "start", file: ankifile.files[0], nativelang: nlang.value, targetlang: tlang.value});
 }
 
-function read_deck()
-{
-    worker.onmessage = function(event) {
-        var results = event.data.results;
-        
-        console.log(event.data);
-        console.log("length: " + results.length);
-        for(var i = 0; i < results.length; i++) {
-            for(var v = 0; v < results[i].values.length; v++) {
-                var s = document.createElement("div");
-                s.innerHTML += clean_string(results[i].values[v][0]);
-                content.appendChild(s);
-            }
-        }
-    }
-    
-    worker.postMessage({action:"exec", sql:"SELECT flds FROM notes;"});
-}
+submit.addEventListener("click", iplus1_start, true);
 
 
-ankifile.onchange = function () {
-    var f = new FileReader();
-    f.onload = function () {
-        console.log("opening: " + f);
-        worker.postMessage({action:"open", buffer:f.result}, [f.result]);
-    }
-    f.readAsArrayBuffer(ankifile.files[0]);    
-}
-    
 
 
-submit.addEventListener("click", read_deck, true);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
