@@ -25,20 +25,14 @@ make
 
 # Server
 
-First, retrieve fresh data:
+Retrieve fresh data:
 
 ```
 ./preparefiles.py
 ```
 
-Then start the server (no initial output, just let it sit in its own terminal for instance):
+Populate redis db
 
 ```
-LD_LIBRARY_PATH=. ./iplus1d
-```
-
-# Client
-
-```
-LD_LIBRARY_PATH=. ./iplus1c
+./fillredis.py
 ```
