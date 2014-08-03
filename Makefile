@@ -94,7 +94,7 @@ install:
 	install libiplus1.so* -m 755 -t $(PREFIX)/lib
 	install lang/* -m 755 -t $(PREFIX)/share/iplus1/lang
 	install data/* -m 644 -t $(PREFIX)/share/iplus1/data
-
+	python setup.py install
 
 clean:
 	rm -r build lang
