@@ -15,7 +15,7 @@ def fill_redis():
         token = pyplus1.lang_parse(lang, sen)
         if token:
             tokenbuf = ','.join(token)
-            redisdb.hset(lang, int(id), token)
+            redisdb.hset(lang, int(id), tokenbuf)
 
 
     linkf = open("data/links.csv")
