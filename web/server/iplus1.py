@@ -96,7 +96,13 @@ class IPlus1Database(object):
 
         return results
         
+    def parse(self, nlang, tlang, deck):
+        result = pyplus1.parse_full(nlang, tlang, deck)
+        out = []
+        for r in result:
+            out.append(Result(r['nid'], r['tid'], ''))
         
+        return out
         
         
         

@@ -25,7 +25,7 @@ class IPlus1Resource(Resource):
         allowed_methods = ['post']
 
     def obj_create(self, bundle, request=None, **kwargs):
-        print bundle.data
+        #print bundle.data
         
         native_lang = bundle.data['native_lang']
         target_lang = bundle.data['target_lang']
