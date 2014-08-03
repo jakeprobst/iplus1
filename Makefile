@@ -5,7 +5,7 @@ PREFIX=/usr/local
 LIB_VERSION = 1.0.0
 LIB_SHORTVER = 1
 
-all: libiplus1.so languages iplus1d iplus1c
+all: libiplus1.so languages iplus1d iplus1c pyplus1
 
 build:
 	mkdir build/
@@ -84,6 +84,9 @@ build/iplus1c/%.o: src/iplus1c/%.c
 
 iplus1c: build/iplus1c $(C_OBJ) 
 	$(CXX) -o $@ $(C_OBJ) $(C_LDFLAGS)
+
+pyplus1:
+	python setup.py build
 
 install:
 	mkdir -p $(PREFIX)/include/iplus1
