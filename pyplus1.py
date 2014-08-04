@@ -87,20 +87,13 @@ def parse_full(nlang, tlang, tato_sen):
     sens = []
     for t in tato_sen:
         sens.append(ffi.new("char[]", t))
-    #sens.append(ffi.new("char[]", ffi.NULL))
     sens.append(ffi.NULL)
     sens_arg = ffi.new("char *[]", sens)
     
-    print sens_arg
-    print ffi.string(sens_arg[0]),ffi.string(sens_arg[1])
-    print [nlang, tlang]
     results = iplus1.iplus1_parse_full(nlang, tlang, sens_arg)
-    print 'a'
-    print results
     r = []
     i = 0
     while results[i].nid != 0:
-        print i, results[i].nid
         r.append({"nid": results[i].nid, "tid": results[i].tid})
         i += 1
     iplus1.iplus1_parse_full_free(results)
