@@ -43,7 +43,6 @@ class IPlus1Manager(object):
         enc_deck = []
         for d in deck:
             enc_deck.append(d.encode('utf-8'))
-        print [nlang, tlang, enc_deck]
         return self.iplus1db.parse(nlang.encode('utf-8'), tlang.encode('utf-8'), enc_deck)
 
     def get_iplus1(self, deck, lang1, lang2):
