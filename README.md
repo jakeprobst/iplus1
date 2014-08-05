@@ -45,4 +45,4 @@ redis-server
 
 # Usage
 
-See example.py for an example of how to use
+See example.py
