@@ -19,11 +19,10 @@ int user_init(user_t* user, char* nl, char* tl)
     return 0;
 }
 
-int user_destroy(user_t* user)
+void user_destroy(user_t* user)
 {
     iplus1_tree_foreach_postorder(&user->words, iplus1_tree_free_key, NULL);
     iplus1_tree_destroy(&user->words);
-    return 0;
 }
 
 int user_add_word(user_t* user, char* word)
@@ -42,7 +41,7 @@ int user_has_word(user_t* user, char* word)
     return !(iplus1_tree_get(&user->words, word) == NULL);
 }
 
-int user_parse(user_t* user, char** sentences)
+void user_parse(user_t* user, char** sentences)
 {
     int i;
     for(i = 0; sentences[i] != NULL; i++) {
@@ -55,7 +54,6 @@ int user_parse(user_t* user, char** sentences)
         
         iplus1_lang_parse_free(tokens);
     }
-    return 0;
 }
 
 

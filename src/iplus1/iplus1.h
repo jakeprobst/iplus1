@@ -8,12 +8,17 @@ enum {
     IPLUS1_FAIL = -1,
 };
 
-struct iplus1_lang_t;
-
+/* initializes libiplus1, call before using anything 
+ * returns -1 on failure */
 int iplus1_init();
-int iplus1_destroy();
 
-struct iplus1_lang_t* iplus1_get_lang(char*);
+/* cleans up libiplus1 */
+void iplus1_destroy();
+
+/* returns language handle to use for parsing 
+ * lang: 3 letter character code ('eng', 'fra', etc.) 
+ * returns NULL if no such language exists */
+struct iplus1_lang_t* iplus1_get_lang(char* lang);
 
 
 #endif /* _IPLUS1_H_ */

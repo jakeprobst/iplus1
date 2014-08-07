@@ -10,10 +10,7 @@ struct iplus1_lang_t** languages;
 
 
 int _iplus1_load_languages()
-{
-    // TODO: later on this should use the PREFIX variable
-    // but for now I`ll just hardcode it where they are locally
-    
+{    
     int count = 1; // language list is null terminated, so start with one
     
     DIR* dir;
@@ -83,7 +80,7 @@ int iplus1_init()
     return IPLUS1_SUCCESS;
 }
 
-int iplus1_destroy()
+void iplus1_destroy()
 {
     int i;
     for(i = 0; languages[i] != NULL; i++) {
@@ -92,8 +89,6 @@ int iplus1_destroy()
     }
     
     free(languages);
-    
-    return IPLUS1_SUCCESS;
 }
 
 

@@ -19,8 +19,12 @@ result_t* iplus1_parse_user(user_t* user)
     int sent_words = 0;
     //int hget_count = 0;
     redis_t redis, sub_redis;
-    redis_init(&redis, NULL, -1);
-    redis_init(&sub_redis, NULL, -1);
+    if (redis_init(&redis, NULL, -1) == -1) {
+        return NULL;
+    }
+    if (redis_init(&sub_redis, NULL, -1) == -1) {
+        return NULL;
+    }
     int index = 0;
     while(1) {
         redis_command(&redis, "SSCAN %s %d", langs, index);

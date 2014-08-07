@@ -1,7 +1,7 @@
 #ifndef _LIST_H_
 #define _LIST_H_
 
-
+// generic linked list implementation
 
 typedef struct iplus1_list_node_t {
     void* data;
