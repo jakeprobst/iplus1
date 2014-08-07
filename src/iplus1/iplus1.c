@@ -71,6 +71,21 @@ iplus1_lang_t* iplus1_get_lang(char* lang)
     return NULL;
 }
 
+
+char** iplus1_get_supported_langs()
+{
+    static char* array[64]; // 64 arbitrary, not futureproofing hard enough
+    if (array[0] == NULL) {
+        int l;
+        for(l = 0; languages[l] != NULL; l++) {
+            array[l] = languages[l]->lang;
+        }
+    }
+    
+    return array;
+}
+
+
 int iplus1_init()
 {    
     if (_iplus1_load_languages() == IPLUS1_FAIL) {

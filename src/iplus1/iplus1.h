@@ -20,5 +20,9 @@ void iplus1_destroy();
  * returns NULL if no such language exists */
 struct iplus1_lang_t* iplus1_get_lang(char* lang);
 
+/* get a list of supported languages
+ * returns NULL terminated array of supported languages*/
+char** iplus1_get_supported_langs();
+
 
 #endif /* _IPLUS1_H_ */
