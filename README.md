@@ -45,4 +45,6 @@ redis-server
 
 # Usage
 
-See example.py
+See example.py for basic usage.  
+example.c for a demo taking an anki deck as an argument  
+./web/server/ contains the code used on tatoeba

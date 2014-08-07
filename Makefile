@@ -5,7 +5,7 @@ PREFIX=/usr/local
 LIB_VERSION = 1.0.0
 LIB_SHORTVER = 1
 
-all: libiplus1.so languages pyplus1
+all: libiplus1.so languages pyplus1 example
 
 build:
 	mkdir build/
@@ -47,6 +47,9 @@ lang/%.so: src/iplus1/lang/%.c
 
 languages: lang $(LANG_OBJ)
 
+example: example.c
+	$(CXX) -Wall -Werror `pkg-config --libs --cflags icu-uc sqlite3` -I./src -L. -lhiredis -liplus1 -o $@ $< 
+
 pyplus1:
 	python setup.py build
 
@@ -62,5 +65,5 @@ install:
 	python setup.py install
 
 clean:
-	rm -r build lang
-	rm libiplus1.so*
+	rm -r build lang __pycache__
+	rm libiplus1.so* example
