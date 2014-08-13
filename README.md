@@ -1,9 +1,15 @@
-iplus1 is a pretty cool thing to do stuff to words
+iplus1 is a library for language learning where it takes a list of words you know
+and a list of sentences and tries to find sentences where exactly one new word
+is present.
 
-This is designed to be part of [Tatoeba](http://tatoeba.org)/[Pytoeba](https://github.com/loolmeh/pytoeba-dev).
-While I suppose it is possible to link this into any project, I don't think I would recommend it.
-I might later on write a version that doesn't depend on redis to keep track of data (maybe local sqlite file, the reason it doesnt use this already is cause lool0 was crying about disk access on the server). If someone seriously wants it I`ll do it.
-But if you really want to:
+
+Currently it is rather integrated with how
+[Tatoeba](http://tatoeba.org)/[Pytoeba](https://github.com/loolmeh/pytoeba-dev)
+handles things. I'm not sure I can recommend it for use in anything else at the
+moment (but if you are interested in using it in your own project, feel free
+to message me).
+
+
 
 ## Requirements
 * icu

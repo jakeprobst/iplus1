@@ -6,9 +6,17 @@
 #include "iplus1/parse.h"
 #include "iplus1/redis.h"
 
+/* this requires a running redis server and running the scripts:
+ * preparefiles.py: fetches data from tatoeba and formats to be easily parsed
+ * fillredis.py: iplus1`s all sentences of a languages and inserts them into redis; also links sentences together
+ * insertlang.py: inserts full copies of sentences into redis
+ * this may take a while (a few hours even) */
+
+
 #define REDIS_SERVER 'localhost'
 #define REDIS_PORT 6379
 
+/* remove any html, clozes, and escape codes from the card string */
 char* anki_card_clean(char* str)
 {
     char* buf = malloc(strlen(str)+1);
@@ -57,6 +65,7 @@ char* anki_card_clean(char* str)
     return buf;
 }
 
+/* get the front side of all cards in a deck */
 char** load_anki_deck(char* ankideck)
 {
     sqlite3 *anki;
@@ -89,6 +98,7 @@ char** load_anki_deck(char* ankideck)
 
 int main(int argc, char** argv)
 {
+    /* initialize iplus1, needs to be done before calling any iplus1 functions */
     iplus1_init();
     
     if (argc != 4) {
@@ -107,18 +117,28 @@ int main(int argc, char** argv)
     char* tlang = argv[2];
     char* ankideck = argv[3];
     
-    
+    /* fetch the sentences from the anki deck */
     char** sentences = load_anki_deck(ankideck);
     if (sentences == NULL) {
         printf("invalid deck: %s\n", ankideck);
         return 0;
     }
     
+    /* the core iplus1 function,
+     * takes character codes for native and target languages
+     * see iplus1_get_supported_langs() for supported languages 
+     * and a NULL terminated array of sentence strings
+     * returns an array of results (see results.h) */
     result_t* results = iplus1_parse_full(nlang, tlang, sentences);
     
-    int r;
+    
+    /* normally, redis should not be used, but in the interest of having a full
+     * locally running setup, I use it here. Tatoeba uses django and so only
+     * required that IDs of sentences would be returned.
+     * In the future sqlite should be possible. */
     redis_t redis;
     redis_init(&redis, NULL, -1);
+    int r;
     for(r = 0; results[r].nid != 0; r++) {
         redis_command(&redis, "HGET %s-full %d", nlang, results[r].nid);
         printf("%s -> ", redis.reply->str);
@@ -126,6 +146,7 @@ int main(int argc, char** argv)
         printf("%s\n", redis.reply->str);
     }
     
+    /* misc cleanup */
     redis_destroy(&redis);
     iplus1_parse_full_free(results);
     iplus1_lang_parse_free(sentences); // this is just a generic strarray free-er
