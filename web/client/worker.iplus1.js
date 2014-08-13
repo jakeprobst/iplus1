@@ -102,6 +102,7 @@ function get_decks(path)
     catch (err) {
         console.log(err);
         postMessage({action:"progress", progress:"select a valid anki deck"});
+        postMessage({action:"decklist", decklist:[]});
         valid_deck = false;
         return;
     }

@@ -59,7 +59,6 @@ function get_selected_decks()
         }
     }
     
-    console.log(out);
     return out;
 }
 
@@ -91,6 +90,7 @@ function handle_result(res)
 
 function handle_decklist(list)
 {
+    deckselect.innerHTML = "";
     for(var l in list) {
         deckselect.innerHTML += '<div class="deck"><input type="checkbox" value="' + list[l][1] + '">' + list[l][0] + "</div>";
     }
