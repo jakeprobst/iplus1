@@ -2,6 +2,8 @@ importScripts("sql.js");
 
 //var content = document.getElementById("content");
 
+var valid_deck = false;
+
 function clean_string(instr)
 {
     var s = instr.split("\x1f")[0];
@@ -36,7 +38,6 @@ function parse_database(db, decks)
         nids += ",'" + cards[0]["values"][i] + "'";
     }
     
-    //var res = db.exec("SELECT flds FROM notes");
     var res = db.exec("SELECT flds FROM notes WHERE id in ("+ nids +");");
 
     out = [];
@@ -64,6 +65,9 @@ function send_request(nlang, tlang, sentences)
 
 function iplus1_start(path, nlang, tlang, decks)
 {
+    if (!valid_deck) {
+        return;
+    }
     if (decks.length == 0) {
         postMessage({action:"progress", progress:"select deck(s) to get cards from"});
         return;
@@ -91,7 +95,16 @@ function make_apkg(sents)
 function get_decks(path)
 {
     var db = read_file(path);
-    var decks = db.exec("SELECT decks FROM col;");
+    try {
+        var decks = db.exec("SELECT decks FROM col;");
+        valid_deck = true;
+    }
+    catch (err) {
+        console.log(err);
+        postMessage({action:"progress", progress:"select a valid anki deck"});
+        valid_deck = false;
+        return;
+    }
     
     decks = JSON.parse(decks[0]["values"][0]);
     
