@@ -23,7 +23,10 @@ iplus1.onmessage = function(event)
             handle_progress(event.data['progress']);
             break
         case "apkg":
-            handle_apkg(event.data["buffer"]);
+            handle_file(event.data["buffer"], "application/zip", "tatoeba.apkg");
+            break;
+        case "csv":
+            handle_file(event.data["buffer"], "text/csv", "tatoeba.csv");
             break;
     }
 }
@@ -65,7 +68,12 @@ function get_selected_decks()
 function make_deck()
 {
     var sents = get_selected_pairs();
-    iplus1.postMessage({action:"apkg", sentences:sents});
+    if (document.getElementById("export_apkg").checked) {
+        iplus1.postMessage({action:"apkg", sentences:sents});
+    }
+    else if (document.getElementById("export_csv").checked) {
+        iplus1.postMessage({action:"csv", sentences:sents});
+    }
 }
 
 
@@ -79,7 +87,9 @@ function handle_result(res)
                             "<span>" + i[0] + "</span>" +
                             '</div><hr />';
     });
-    
+    content.innerHTML == "<br /><br />";
+    content.innerHTML += '<input type="radio" id="export_apkg" name="export", value="apkg" checked>.apkg<br />';
+    content.innerHTML += '<input type="radio" id="export_csv" name="export", value="csv">.csv<br />';
     var makedeck = document.createElement("input");
     makedeck.setAttribute("type","button");
     makedeck.setAttribute("id","makedeck");
@@ -103,14 +113,15 @@ function handle_progress(prog)
 }
 
 
-function handle_apkg(buffer)
+function handle_file(buffer, mimetype, filename)
 {
-    var blob = new Blob([buffer], {type: 'text/csv'});
+    console.log("handle file: "+mimetype+" "+filename);
+    var blob = new Blob([buffer], {type: mimetype});
     var a = document.createElement("a");
     a.style = "display: none;";
     document.body.appendChild(a);
     a.href = window.URL.createObjectURL(blob);
-    a.download = "tatoeba.csv";
+    a.download = filename;
     a.click();
 }
 

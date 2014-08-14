@@ -1,4 +1,6 @@
 importScripts("sql.js");
+importScripts("jszip.min.js");
+importScripts("apkg.js");
 
 //var content = document.getElementById("content");
 
@@ -83,14 +85,22 @@ function iplus1_start(path, nlang, tlang, decks)
 
 // TODO: actually make apkg? a csv is probably better/easier
 // apkgs dont really offer anything special...
-function make_apkg(sents)
+function make_csv(sents)
 {
     out = []
     sents.map( function (i) {
         out.push(i[0] + "\t" + i[1]);
     });
-    
-    postMessage({action:"apkg", buffer:out.join('\n')});
+    postMessage({action:"csv", buffer:out.join('\n')});
+}
+
+function make_apkg(sents)
+{
+    apkg = apkg_new();
+    sents.map( function (i) {
+        apkg_add_card(apkg, i[0], i[1]);
+    });
+    postMessage({action:"apkg", buffer:apkg_blob(apkg)});
 }
 
 function get_decks(path)
@@ -131,6 +141,9 @@ function handle_message(event)
             break;
         case "apkg":
             make_apkg(event.data['sentences']);
+            break;
+        case "csv":
+            make_csv(event.data['sentences']);
             break;
     }
 }
