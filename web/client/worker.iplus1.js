@@ -31,7 +31,8 @@ function parse_database(db, decks)
         dids += ",'" + decks[i] + "'";
     }
     
-    var cards = db.exec("SELECT DISTINCT nid FROM cards WHERE did IN ("+ dids +");");
+    // if the interval is greater than 21 the card is mature and should be known
+    var cards = db.exec("SELECT DISTINCT nid FROM cards WHERE did IN ("+ dids +") AND ivl > 21;");
     
     var nids = "'" + cards[0]["values"][0] + "'";
     for(var i = 1; i < cards[0]["values"].length; i++) {
