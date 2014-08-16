@@ -28,13 +28,18 @@ function parse_database(db, decks)
 {
     postMessage({action:"progress", progress:"parsing db"});
     
-    var dids = "'" + decks[0] + "'";
+    var dids = decks[0];
     for(var i = 1; i < decks.length; i++) {
-        dids += ",'" + decks[i] + "'";
+        dids += ", " + decks[i];
     }
     
     // if the interval is greater than 21 the card is mature and should be known
     var cards = db.exec("SELECT DISTINCT nid FROM cards WHERE did IN ("+ dids +") AND ivl > 21;");
+    console.log(cards);
+    if (cards.length == 0) {
+        postMessage({action:"progress", progress:"no valid cards in selected deck(s)"});
+        return "";
+    }
     
     var nids = "'" + cards[0]["values"][0] + "'";
     for(var i = 1; i < cards[0]["values"].length; i++) {
@@ -78,6 +83,9 @@ function iplus1_start(path, nlang, tlang, decks)
     
     var db = read_file(path);
     var sentences = parse_database(db, decks);
+    if (sentences == "") {
+        return;
+    }
     var response = send_request(nlang, tlang, sentences);
     
     postMessage({action:"result", result: response});
@@ -122,7 +130,7 @@ function get_decks(path)
     
     var dl = [];
     for(var d in decks) {
-        dl.push([decks[d]["name"], decks[d]["id"]])
+        dl.push([decks[d]["name"], decks[d]["id"]]);
     }
     
     postMessage({action:"decklist", decklist:dl});
